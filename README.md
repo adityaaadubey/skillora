@@ -5,6 +5,7 @@
   <p><strong>High-Trust Student Opportunity Intelligence & Deterministic Matching Platform</strong></p>
 
   <p>
+    <a href="https://skillora-aditya.vercel.app"><img src="https://img.shields.io/badge/Live%20Demo-skillora--aditya.vercel.app-6366f1?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" /></a>
     <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16.3-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" /></a>
     <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19-61dafb?style=for-the-badge&logo=react&logoColor=black" alt="React 19" /></a>
     <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
@@ -14,6 +15,7 @@
   </p>
 
   <p>
+    <a href="https://skillora-aditya.vercel.app"><strong>🌐 Visit Live App</strong></a> •
     <a href="#key-features">Features</a> •
     <a href="#ui-showcase">Screenshots</a> •
     <a href="#system-architecture">Architecture</a> •
