@@ -10,8 +10,6 @@ import {
   CheckCircle,
   AlertCircle,
   Loader2,
-  RefreshCw,
-  ShieldCheck,
 } from 'lucide-react'
 
 export default function AdminSourcesPage() {
@@ -184,6 +182,22 @@ export default function AdminSourcesPage() {
             <div>New Opportunities Added: <strong style={{ color: '#6ee7b7' }}>{syncResult.itemsIngested}</strong></div>
             <div>Duplicates Prevented: <strong style={{ color: 'var(--accent-amber)' }}>{syncResult.duplicatesSkipped}</strong></div>
           </div>
+        </div>
+      )}
+
+      {errorMsg && (
+        <div className="glass-panel" style={{
+          padding: '1.25rem',
+          marginBottom: '2rem',
+          background: 'rgba(239, 68, 68, 0.1)',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          color: '#fca5a5',
+        }}>
+          <AlertCircle size={18} />
+          <span>{errorMsg}</span>
         </div>
       )}
 

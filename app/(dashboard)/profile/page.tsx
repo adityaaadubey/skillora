@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Check, Loader2, Plus, X, Sparkles, User, GraduationCap, Code, Briefcase } from 'lucide-react'
+import { Check, Loader2, Plus, X, GraduationCap, Code, Briefcase } from 'lucide-react'
 
 export default function ProfilePage() {
   const [loading, setLoading] = useState(true)

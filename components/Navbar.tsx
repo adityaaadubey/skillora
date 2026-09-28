@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { createClient } from '../lib/supabase/client'
-import { Compass, Bookmark, LayoutDashboard, Shield, LogIn, LogOut, User, Bell } from 'lucide-react'
+import { Compass, Bookmark, LayoutDashboard, Shield, LogIn, LogOut, User, Bell, Sun, Moon } from 'lucide-react'
 
 export function Navbar() {
   const pathname = usePathname()
@@ -12,8 +12,13 @@ export function Navbar() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
 
   useEffect(() => {
+    // Detect active theme
+    const activeTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'
+    setTheme(activeTheme)
+
     const supabase = createClient()
 
     async function loadUser() {
@@ -51,9 +56,23 @@ export function Navbar() {
     }
   }, [])
 
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(nextTheme)
+    document.documentElement.setAttribute('data-theme', nextTheme)
+    try {
+      localStorage.setItem('skillora-theme', nextTheme)
+    } catch {}
+  }
+
   const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+    } catch {}
     const supabase = createClient()
     await supabase.auth.signOut()
+    setUser(null)
+    setProfile(null)
     router.push('/')
     router.refresh()
   }
@@ -71,7 +90,7 @@ export function Navbar() {
       position: 'sticky',
       top: 0,
       zIndex: 50,
-      background: 'rgba(7, 9, 14, 0.85)',
+      background: 'var(--bg-glass)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
       borderBottom: '1px solid var(--border-subtle)',
@@ -163,8 +182,35 @@ export function Navbar() {
           )}
         </nav>
 
-        {/* Right Action Profile / Login */}
+        {/* Right Action Profile / Login & Theme Toggle */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+          {/* Theme Toggle Button */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: 'var(--radius-md)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-secondary)',
+              cursor: 'pointer',
+              transition: 'all var(--transition-fast)',
+            }}
+          >
+            {theme === 'dark' ? (
+              <Sun size={17} style={{ color: '#f59e0b' }} />
+            ) : (
+              <Moon size={17} style={{ color: '#6366f1' }} />
+            )}
+          </button>
+
           {!loading && (
             <>
               {user ? (
@@ -243,3 +289,35 @@ export function Navbar() {
     </header>
   )
 }
+
+export function MobileNav() {
+  const pathname = usePathname()
+
+  const tabs = [
+    { href: '/opportunities', label: 'Explore', icon: Compass },
+    { href: '/saved', label: 'Saved', icon: Bookmark },
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/profile', label: 'Profile', icon: User },
+  ]
+
+  return (
+    <nav className="mobile-nav" aria-label="Mobile Navigation">
+      {tabs.map((tab) => {
+        const Icon = tab.icon
+        const isActive = pathname === tab.href || pathname.startsWith(tab.href + '/')
+        return (
+          <Link
+            key={tab.href}
+            href={tab.href}
+            className={`mobile-nav-item ${isActive ? 'active' : ''}`}
+            aria-current={isActive ? 'page' : undefined}
+          >
+            <Icon size={20} strokeWidth={isActive ? 2.5 : 1.75} />
+            <span>{tab.label}</span>
+          </Link>
+        )
+      })}
+    </nav>
+  )
+}
+

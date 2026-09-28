@@ -2,24 +2,38 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 
 import {
-  sendOtpSchema,
-  verifyOtpSchema,
+  loginSchema,
+  signupSchema,
   opportunityFilterSchema,
   saveOpportunitySchema,
   createReminderSchema,
   reportOpportunitySchema,
   updateProfileSchema,
 } from '../lib/validations/index.ts'
+import {
+  formatDeadline,
+  getCategoryBadgeClass,
+  formatCompensation,
+} from '../lib/utils.ts'
 
-test('Validations - Send OTP Schema', () => {
-  assert.equal(sendOtpSchema.safeParse({ email: 'student@university.edu' }).success, true)
-  assert.equal(sendOtpSchema.safeParse({ email: 'invalid-email' }).success, false)
-  assert.equal(sendOtpSchema.safeParse({ email: '' }).success, false)
+test('Validations - Login Schema', () => {
+  assert.equal(loginSchema.safeParse({ email: 'student@university.edu', password: 'Password123' }).success, true)
+  assert.equal(loginSchema.safeParse({ email: 'invalid-email', password: '123' }).success, false)
 })
 
-test('Validations - Verify OTP Schema', () => {
-  assert.equal(verifyOtpSchema.safeParse({ email: 'student@university.edu', token: '123456' }).success, true)
-  assert.equal(verifyOtpSchema.safeParse({ email: 'student@university.edu', token: '123' }).success, false)
+test('Validations - Signup Schema', () => {
+  assert.equal(signupSchema.safeParse({
+    email: 'student@university.edu',
+    password: 'Password123',
+    fullName: 'Jane Doe',
+    role: 'student'
+  }).success, true)
+  assert.equal(signupSchema.safeParse({
+    email: 'student@university.edu',
+    password: 'short',
+    fullName: 'J',
+    role: 'student'
+  }).success, false)
 })
 
 test('Validations - Opportunity Filters', () => {
@@ -54,4 +68,42 @@ test('Validations - Profile Update', () => {
     preferred_categories: ['internship', 'hackathon'],
   })
   assert.equal(valid.success, true)
+})
+
+test('Canonical Utils - Category Badge Classes', () => {
+  assert.equal(getCategoryBadgeClass('internship'), 'badge-indigo')
+  assert.equal(getCategoryBadgeClass('hackathon'), 'badge-amber')
+  assert.equal(getCategoryBadgeClass('scholarship'), 'badge-emerald')
+  assert.equal(getCategoryBadgeClass('fellowship'), 'badge-cyan')
+  assert.equal(getCategoryBadgeClass('unknown'), 'badge-indigo')
+})
+
+test('Canonical Utils - Deadline Formatting & Urgency', () => {
+  assert.equal(formatDeadline(null).text, 'Rolling')
+  assert.equal(formatDeadline(undefined).urgency, 'normal')
+
+  const expiredDate = new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString()
+  assert.equal(formatDeadline(expiredDate).urgency, 'expired')
+  assert.equal(formatDeadline(expiredDate).text, 'Expired')
+
+  const todayDate = new Date().toISOString()
+  assert.equal(formatDeadline(todayDate).urgency, 'soon')
+
+  const soonDate = new Date(Date.now() + 4 * 24 * 3600 * 1000).toISOString()
+  assert.equal(formatDeadline(soonDate).urgency, 'soon')
+  assert.ok(formatDeadline(soonDate).text.includes('d left'))
+})
+
+test('Canonical Utils - Compensation Formatting', () => {
+  const stipend = formatCompensation({ stipend_min: 10000, stipend_max: 25000, currency: '₹' })
+  assert.equal(stipend.type, 'stipend')
+  assert.equal(stipend.label, '₹ 10,000 - 25,000')
+
+  const prize = formatCompensation({ prize_pool_max: 50000, currency: '$' })
+  assert.equal(prize.type, 'prize')
+  assert.equal(prize.label, 'Prize $ 50,000')
+
+  const free = formatCompensation({})
+  assert.equal(free.type, 'free')
+  assert.equal(free.label, 'Free Entry')
 })

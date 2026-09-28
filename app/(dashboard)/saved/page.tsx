@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { getCategoryBadgeClass } from '../../../lib/utils'
 import { Bookmark, ExternalLink, Trash2, Edit3, Check, Loader2, ArrowRight } from 'lucide-react'
 
 export default function SavedPipelinePage() {
@@ -177,7 +178,7 @@ export default function SavedPipelinePage() {
                 <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.375rem' }}>
-                      <span className="badge badge-indigo">{opp?.category || 'Opportunity'}</span>
+                      <span className={`badge ${getCategoryBadgeClass(opp?.category)}`}>{opp?.category || 'Opportunity'}</span>
                       <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
                         Saved on {new Date(item.created_at).toLocaleDateString()}
                       </span>

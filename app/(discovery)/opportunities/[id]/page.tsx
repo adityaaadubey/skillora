@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
+import { formatDeadline, getCategoryBadgeClass, formatCompensation } from '../../../../lib/utils'
 import {
   ArrowLeft,
   Bookmark,
@@ -15,10 +16,8 @@ import {
   Award,
   Sparkles,
   CheckCircle2,
-  AlertTriangle,
   Building2,
   Clock,
-  Send,
   Loader2,
 } from 'lucide-react'
 
@@ -201,7 +200,15 @@ export default function OpportunityDetailPage({
             <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem' }}>
               {/* Badges */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                <span className="badge badge-indigo">{opp.category}</span>
+                <span className={`badge ${getCategoryBadgeClass(opp.category)}`}>{opp.category}</span>
+                {opp.platform && (
+                  <span
+                    className={`badge-platform badge-platform-${opp.platform.toLowerCase().replace(/\s+/g, '-')}`}
+                    title={`Opportunity hosted on ${opp.platform}`}
+                  >
+                    {opp.platform}
+                  </span>
+                )}
                 {opp.is_verified && (
                   <span className="badge badge-emerald">
                     <ShieldCheck size={13} /> Verified
@@ -250,11 +257,7 @@ export default function OpportunityDetailPage({
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontWeight: 600 }}>
                     <Calendar size={15} color="var(--accent-indigo)" />
-                    <span>
-                      {opp.deadline
-                        ? new Date(opp.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                        : 'Rolling Basis'}
-                    </span>
+                    <span>{formatDeadline(opp.deadline).formattedDate}</span>
                   </div>
                 </div>
 
@@ -273,19 +276,26 @@ export default function OpportunityDetailPage({
                     Compensation / Reward
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontWeight: 600, color: '#6ee7b7' }}>
-                    {opp.stipend_max ? (
-                      <>
-                        <DollarSign size={15} />
-                        <span>{opp.currency || '₹'} {opp.stipend_max.toLocaleString()}</span>
-                      </>
-                    ) : opp.prize_pool_max ? (
-                      <>
-                        <Award size={15} color="#fcd34d" />
-                        <span style={{ color: '#fcd34d' }}>Prize: {opp.currency || '₹'} {opp.prize_pool_max.toLocaleString()}</span>
-                      </>
-                    ) : (
-                      <span>Free Entry</span>
-                    )}
+                    {(() => {
+                      const comp = formatCompensation(opp)
+                      if (comp.type === 'stipend') {
+                        return (
+                          <>
+                            <DollarSign size={15} />
+                            <span>{comp.label}</span>
+                          </>
+                        )
+                      }
+                      if (comp.type === 'prize') {
+                        return (
+                          <>
+                            <Award size={15} color="#fcd34d" />
+                            <span style={{ color: '#fcd34d' }}>{comp.label}</span>
+                          </>
+                        )
+                      }
+                      return <span>{comp.label}</span>
+                    })()}
                   </div>
                 </div>
 
@@ -373,7 +383,7 @@ export default function OpportunityDetailPage({
                 className="btn btn-primary"
                 style={{ width: '100%', padding: '0.875rem', fontSize: '1rem', marginBottom: '0.75rem' }}
               >
-                <span>Apply on Official Site</span>
+                <span>Apply on {opp.platform || 'Official Site'}</span>
                 <ExternalLink size={18} />
               </a>
 

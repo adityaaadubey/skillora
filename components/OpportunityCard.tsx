@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { Opportunity } from '../lib/database.types'
+import { formatDeadline, getCategoryBadgeClass, formatCompensation } from '../lib/utils'
 import { Bookmark, Clock, MapPin, DollarSign, Award, ExternalLink, CheckCircle, Sparkles } from 'lucide-react'
 
 interface OpportunityCardProps {
@@ -23,27 +24,8 @@ export function OpportunityCard({
   const [saved, setSaved] = useState(initialSaved)
   const [saving, setSaving] = useState(false)
 
-  // Compute deadline urgency
-  let deadlineText = 'Rolling'
-  let urgencyLevel: 'normal' | 'soon' | 'expired' = 'normal'
-
-  if (opportunity.deadline) {
-    const deadlineDate = new Date(opportunity.deadline)
-    const diffDays = Math.ceil((deadlineDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-
-    if (diffDays < 0) {
-      deadlineText = 'Expired'
-      urgencyLevel = 'expired'
-    } else if (diffDays === 0) {
-      deadlineText = 'Ends Today!'
-      urgencyLevel = 'soon'
-    } else if (diffDays <= 7) {
-      deadlineText = `${diffDays}d left`
-      urgencyLevel = 'soon'
-    } else {
-      deadlineText = deadlineDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    }
-  }
+  const deadline = formatDeadline(opportunity.deadline)
+  const compensation = formatCompensation(opportunity)
 
   const handleSave = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -69,16 +51,6 @@ export function OpportunityCard({
     }
   }
 
-  const categoryColor = () => {
-    switch (opportunity.category) {
-      case 'internship': return 'badge-indigo'
-      case 'hackathon': return 'badge-amber'
-      case 'scholarship': return 'badge-emerald'
-      case 'fellowship': return 'badge-cyan'
-      default: return 'badge-indigo'
-    }
-  }
-
   return (
     <div className="glass-panel glass-panel-hover" style={{
       display: 'flex',
@@ -90,9 +62,17 @@ export function OpportunityCard({
       {/* Top Bar: Category, Verified, Save Button */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.875rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <span className={`badge ${categoryColor()}`}>
+          <span className={`badge ${getCategoryBadgeClass(opportunity.category)}`}>
             {opportunity.category}
           </span>
+          {opportunity.platform && (
+            <span
+              className={`badge-platform badge-platform-${opportunity.platform.toLowerCase().replace(/\s+/g, '-')}`}
+              title={`Verified opportunity on ${opportunity.platform}`}
+            >
+              {opportunity.platform}
+            </span>
+          )}
           {opportunity.is_verified && (
             <span className="badge badge-emerald" title="Verified by Skillora">
               <CheckCircle size={12} /> Verified
@@ -197,18 +177,15 @@ export function OpportunityCard({
           <span>{opportunity.mode === 'remote' ? 'Remote' : opportunity.location || 'Flexible'}</span>
         </div>
 
-        {opportunity.stipend_max ? (
+        {compensation.type === 'stipend' ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: '#6ee7b7' }}>
             <DollarSign size={14} />
-            <span>
-              {opportunity.currency || '₹'} {opportunity.stipend_min ? `${opportunity.stipend_min.toLocaleString()} - ` : ''}
-              {opportunity.stipend_max.toLocaleString()}
-            </span>
+            <span>{compensation.label}</span>
           </div>
-        ) : opportunity.prize_pool_max ? (
+        ) : compensation.type === 'prize' ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: '#fcd34d' }}>
             <Award size={14} />
-            <span>Prize {opportunity.currency || '₹'} {opportunity.prize_pool_max.toLocaleString()}</span>
+            <span>{compensation.label}</span>
           </div>
         ) : null}
 
@@ -217,11 +194,11 @@ export function OpportunityCard({
           alignItems: 'center',
           gap: '0.375rem',
           marginLeft: 'auto',
-          color: urgencyLevel === 'soon' ? '#f87171' : 'var(--text-secondary)',
-          fontWeight: urgencyLevel === 'soon' ? 700 : 500,
+          color: deadline.urgency === 'soon' ? '#f87171' : 'var(--text-secondary)',
+          fontWeight: deadline.urgency === 'soon' ? 700 : 500,
         }}>
           <Clock size={14} />
-          <span>{deadlineText}</span>
+          <span>{deadline.text}</span>
         </div>
       </div>
 
@@ -249,14 +226,29 @@ export function OpportunityCard({
           )}
         </div>
 
-        <Link
-          href={`/opportunities/${opportunity.id}`}
-          className="btn btn-secondary"
-          style={{ padding: '0.35rem 0.75rem', fontSize: '0.8125rem' }}
-        >
-          <span>View</span>
-          <ExternalLink size={13} />
-        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+          {opportunity.application_url && (
+            <a
+              href={opportunity.application_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-outline"
+              title={`Apply directly on ${opportunity.platform || 'source portal'}`}
+              style={{ padding: '0.35rem 0.625rem', fontSize: '0.75rem', gap: '0.25rem' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span>Apply</span>
+              <ExternalLink size={12} />
+            </a>
+          )}
+          <Link
+            href={`/opportunities/${opportunity.id}`}
+            className="btn btn-secondary"
+            style={{ padding: '0.35rem 0.75rem', fontSize: '0.8125rem' }}
+          >
+            <span>Details</span>
+          </Link>
+        </div>
       </div>
     </div>
   )

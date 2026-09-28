@@ -1,17 +1,27 @@
 import { z } from 'zod'
 
-export const sendOtpSchema = z.object({
-  email: z.string().trim().email('Please enter a valid academic or personal email address.'),
+export const loginSchema = z.object({
+  email: z.string().trim().email('Please enter a valid email address.'),
+  password: z.string().min(6, 'Password must be at least 6 characters.'),
 })
 
-export const verifyOtpSchema = z.object({
-  email: z.string().trim().email('Invalid email address.'),
-  token: z.string().trim().min(6, 'Verification code must be 6 digits').max(8, 'Invalid token length'),
+export const signupSchema = z.object({
+  email: z.string().trim().email('Please enter a valid email address.'),
+  password: z.string().min(6, 'Password must be at least 6 characters.'),
+  fullName: z.string().trim().min(2, 'Name must have at least 2 characters').max(100),
+  role: z.enum(['student', 'organizer']),
+  college: z.string().trim().optional(),
+  degree: z.string().trim().optional(),
+  graduationYear: z.coerce.number().int().min(2020).max(2035).optional().nullable(),
+  organizationName: z.string().trim().optional(),
+  organizationType: z.string().trim().optional(),
+  website: z.string().trim().url('Invalid URL format').or(z.literal('')).optional(),
 })
 
 export const opportunityFilterSchema = z.object({
   q: z.string().optional().default(''),
   category: z.string().optional(),
+  platform: z.string().optional(),
   mode: z.enum(['all', 'remote', 'offline', 'hybrid', 'any']).optional().default('all'),
   pricing_type: z.enum(['all', 'free', 'paid', 'freemium']).optional().default('all'),
   sort: z.enum(['relevance', 'deadline_asc', 'newest', 'stipend_desc']).optional().default('relevance'),

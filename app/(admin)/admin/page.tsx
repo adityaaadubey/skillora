@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Shield, CheckCircle, AlertTriangle, Rss, ArrowRight, Activity, Loader2 } from 'lucide-react'
+import { Shield, Rss, Activity, Loader2 } from 'lucide-react'
 
 export default function AdminOverviewPage() {
   const [data, setData] = useState<any>(null)

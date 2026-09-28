@@ -200,6 +200,7 @@ export type Database = {
           opportunity_type: string | null
           organization: string
           organization_website: string | null
+          platform: string | null
           price: number | null
           pricing_type: string | null
           prize_pool_max: number | null
@@ -246,6 +247,7 @@ export type Database = {
           opportunity_type?: string | null
           organization: string
           organization_website?: string | null
+          platform?: string | null
           price?: number | null
           pricing_type?: string | null
           prize_pool_max?: number | null
@@ -292,6 +294,7 @@ export type Database = {
           opportunity_type?: string | null
           organization?: string
           organization_website?: string | null
+          platform?: string | null
           price?: number | null
           pricing_type?: string | null
           prize_pool_max?: number | null

@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { Navbar } from '../components/Navbar'
+import { Navbar, MobileNav } from '../components/Navbar'
 import { Footer } from '../components/Footer'
-import { MobileNav } from '../components/MobileNav'
 
 export const metadata: Metadata = {
   title: 'Skillora | High-Trust Student Opportunity Intelligence',
@@ -23,10 +22,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#07090e" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem('skillora-theme');var t=s||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+          }}
+        />
       </head>
       <body>
         <a href="#main-content" className="skip-link">

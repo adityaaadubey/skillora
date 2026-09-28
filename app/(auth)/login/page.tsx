@@ -3,42 +3,46 @@
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Mail, ArrowRight, ShieldCheck, Sparkles, Loader2 } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Sparkles, Loader2 } from 'lucide-react'
 
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const returnTo = searchParams.get('returnTo') || '/dashboard'
+  const returnTo = searchParams.get('returnTo') || '/opportunities'
 
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const [success, setSuccess] = useState<string | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setSuccess(null)
     setLoading(true)
 
     try {
-      const res = await fetch('/api/auth/otp', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: email.trim(), password }),
       })
 
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to send verification code')
+        throw new Error(data.error || 'Invalid email or password')
       }
 
-      setSuccess(true)
+      setSuccess('Signed in successfully! Redirecting...')
       setTimeout(() => {
-        router.push(`/verify-otp?email=${encodeURIComponent(email)}&returnTo=${encodeURIComponent(returnTo)}`)
-      }, 800)
+        router.push(returnTo)
+        router.refresh()
+      }, 500)
     } catch (err: any) {
-      setError(err?.message || 'Something went wrong. Please check your email and try again.')
+      setError(err?.message || 'Login failed. Please verify your email and password.')
     } finally {
       setLoading(false)
     }
@@ -51,27 +55,27 @@ function LoginForm() {
       padding: '2.5rem 2rem',
       position: 'relative',
     }}>
-      {/* Header Icon */}
-      <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <div style={{
-          width: '48px',
-          height: '48px',
-          borderRadius: '12px',
+          width: '50px',
+          height: '50px',
+          borderRadius: '14px',
           background: 'linear-gradient(135deg, var(--accent-indigo), var(--accent-cyan))',
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
           color: '#fff',
           marginBottom: '1rem',
-          boxShadow: '0 0 20px rgba(99, 102, 241, 0.4)',
+          boxShadow: '0 0 25px rgba(99, 102, 241, 0.4)',
         }}>
           <Sparkles size={24} />
         </div>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '0.375rem' }}>
-          Sign in to Skillora
+        <h1 style={{ fontSize: '1.625rem', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '0.375rem' }}>
+          Welcome back to Skillora
         </h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-          Passwordless. Enter your email to receive a 6-digit one-time code.
+          Enter your email and password to access your account.
         </p>
       </div>
 
@@ -103,27 +107,28 @@ function LoginForm() {
           gap: '0.5rem',
         }}>
           <ShieldCheck size={16} />
-          <span>Code sent! Redirecting to verification...</span>
+          <span>{success}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="form-label" htmlFor="email-input">
-            Academic or Personal Email
+      {/* Direct Email + Password Form */}
+      <form onSubmit={handleLogin}>
+        <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+          <label className="form-label" htmlFor="login-email">
+            Email Address
           </label>
           <div style={{ position: 'relative' }}>
             <input
-              id="email-input"
+              id="login-email"
               type="email"
               required
-              placeholder="name@university.edu"
+              placeholder="name@university.edu or name@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="form-input"
               style={{ paddingLeft: '2.5rem' }}
               autoComplete="email"
-              disabled={loading || success}
+              disabled={loading}
             />
             <Mail
               size={18}
@@ -138,38 +143,88 @@ function LoginForm() {
           </div>
         </div>
 
+        <div className="form-group" style={{ marginBottom: '1.75rem' }}>
+          <label className="form-label" htmlFor="login-password">
+            Password
+          </label>
+          <div style={{ position: 'relative' }}>
+            <input
+              id="login-password"
+              type={showPassword ? 'text' : 'password'}
+              required
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="form-input"
+              style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
+              autoComplete="current-password"
+              disabled={loading}
+            />
+            <Lock
+              size={18}
+              style={{
+                position: 'absolute',
+                left: '0.875rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--text-muted)',
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '0.875rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-muted)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+        </div>
+
         <button
           type="submit"
           className="btn btn-primary"
-          style={{ width: '100%', padding: '0.75rem', marginTop: '0.5rem' }}
-          disabled={loading || success}
+          style={{ width: '100%', padding: '0.8125rem', fontSize: '0.9375rem' }}
+          disabled={loading}
         >
           {loading ? (
             <>
-              <Loader2 size={16} className="animate-spin" />
-              <span>Sending OTP Code...</span>
+              <Loader2 size={18} className="animate-spin" />
+              <span>Signing in...</span>
             </>
           ) : (
             <>
-              <span>Continue with Email OTP</span>
-              <ArrowRight size={16} />
+              <span>Sign In</span>
+              <ArrowRight size={18} />
             </>
           )}
         </button>
       </form>
 
+      {/* Switch to Register */}
       <div style={{
-        marginTop: '2rem',
+        marginTop: '1.75rem',
         paddingTop: '1.25rem',
         borderTop: '1px solid var(--border-subtle)',
         textAlign: 'center',
-        fontSize: '0.8125rem',
-        color: 'var(--text-muted)',
+        fontSize: '0.875rem',
+        color: 'var(--text-secondary)',
       }}>
-        <span>By signing in, you accept our </span>
-        <Link href="/settings" style={{ color: 'var(--text-link)', textDecoration: 'underline' }}>Terms</Link>
-        <span> & </span>
-        <Link href="/settings" style={{ color: 'var(--text-link)', textDecoration: 'underline' }}>Privacy Policy</Link>
+        Don&apos;t have an account?{' '}
+        <Link href="/register" style={{ color: 'var(--accent-indigo)', fontWeight: 700, textDecoration: 'none' }}>
+          Create an Account
+        </Link>
       </div>
     </div>
   )
@@ -178,16 +233,16 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div style={{
-      minHeight: 'calc(100vh - 68px - 200px)',
+      minHeight: 'calc(100vh - 68px - 100px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       padding: '2rem 1.25rem',
     }}>
       <Suspense fallback={
-        <div className="glass-panel" style={{ width: '100%', maxWidth: '440px', padding: '3rem', textAlign: 'center' }}>
-          <Loader2 size={28} className="animate-spin" style={{ margin: '0 auto 1rem', color: 'var(--accent-indigo)' }} />
-          <p style={{ color: 'var(--text-secondary)' }}>Loading authentication portal...</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }}>
+          <Loader2 size={20} className="animate-spin" />
+          <span>Loading portal...</span>
         </div>
       }>
         <LoginForm />

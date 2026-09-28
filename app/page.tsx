@@ -113,7 +113,7 @@ export default async function HomePage() {
                 <span>Explore Opportunities</span>
               </Link>
               <Link href="/login" className="btn btn-secondary" style={{ padding: '0.875rem 1.75rem', fontSize: '1rem' }}>
-                <span>Get Matched With OTP</span>
+                <span>Sign In / Join</span>
                 <ArrowRight size={18} />
               </Link>
             </div>

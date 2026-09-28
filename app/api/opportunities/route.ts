@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
     const rawParams = {
       q: searchParams.get('q') || '',
       category: searchParams.get('category') || undefined,
+      platform: searchParams.get('platform') || undefined,
       mode: searchParams.get('mode') || 'all',
       pricing_type: searchParams.get('pricing_type') || 'all',
       sort: searchParams.get('sort') || 'relevance',
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid filter parameters', details: validation.error.flatten() }, { status: 400 })
     }
 
-    const { q, category, mode, pricing_type, sort, page, limit } = validation.data
+    const { q, category, platform, mode, pricing_type, sort, page, limit } = validation.data
     const supabase = await createClient()
 
     // Check optional authentication for personalized scoring
@@ -53,6 +54,10 @@ export async function GET(request: NextRequest) {
 
     if (category && category !== 'all') {
       query = query.eq('category', category)
+    }
+
+    if (platform && platform !== 'all') {
+      query = query.eq('platform', platform)
     }
 
     if (mode && mode !== 'all') {

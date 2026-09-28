@@ -45,7 +45,13 @@ export async function updateSession(request: NextRequest) {
   const isAdminRoute = pathname.startsWith('/admin')
 
   // Auth routes
-  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/verify-otp')
+  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/register')
+
+  if (pathname.startsWith('/verify-otp')) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
 
   if (!user && (isDashboardRoute || isAdminRoute)) {
     const url = request.nextUrl.clone()

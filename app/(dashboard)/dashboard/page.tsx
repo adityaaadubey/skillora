@@ -8,7 +8,6 @@ import {
   Bookmark,
   Bell,
   CheckCircle2,
-  AlertCircle,
   ArrowRight,
   TrendingUp,
   BrainCircuit,
@@ -34,6 +33,7 @@ export default function DashboardPage() {
         if (profData.profile) setProfile(profData.profile)
         if (recData.recommendations) setRecommendations(recData.recommendations)
         if (sessData.user?.savedCount) setSavedCount(sessData.user.savedCount)
+        if (sessData.user?.remindersCount) setRemindersCount(sessData.user.remindersCount)
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false))

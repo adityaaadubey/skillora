@@ -12,6 +12,7 @@ function OpportunitiesList() {
   // State initialized from URL query params
   const [query, setQuery] = useState(searchParams.get('q') || '')
   const [category, setCategory] = useState(searchParams.get('category') || 'all')
+  const [platform, setPlatform] = useState(searchParams.get('platform') || 'all')
   const [mode, setMode] = useState(searchParams.get('mode') || 'all')
   const [pricingType, setPricingType] = useState(searchParams.get('pricing_type') || 'all')
   const [sort, setSort] = useState(searchParams.get('sort') || 'relevance')
@@ -32,6 +33,18 @@ function OpportunitiesList() {
     { label: 'Courses', value: 'course' },
   ]
 
+  const platforms = [
+    { label: 'All Platforms', value: 'all' },
+    { label: 'Google Careers', value: 'Google Careers' },
+    { label: 'Unstop', value: 'Unstop' },
+    { label: 'Hack2Skill', value: 'Hack2Skill' },
+    { label: 'Internshala', value: 'Internshala' },
+    { label: 'LinkedIn', value: 'LinkedIn' },
+    { label: 'Devfolio', value: 'Devfolio' },
+    { label: 'HackerEarth', value: 'HackerEarth' },
+    { label: 'Devpost', value: 'Devpost' },
+  ]
+
   // Synchronize URL and fetch results
   useEffect(() => {
     let ignore = false
@@ -40,6 +53,7 @@ function OpportunitiesList() {
     const params = new URLSearchParams()
     if (query) params.set('q', query)
     if (category !== 'all') params.set('category', category)
+    if (platform !== 'all') params.set('platform', platform)
     if (mode !== 'all') params.set('mode', mode)
     if (pricingType !== 'all') params.set('pricing_type', pricingType)
     if (sort !== 'relevance') params.set('sort', sort)
@@ -62,7 +76,7 @@ function OpportunitiesList() {
     return () => {
       ignore = true
     }
-  }, [query, category, mode, pricingType, sort, page])
+  }, [query, category, platform, mode, pricingType, sort, page])
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -72,13 +86,14 @@ function OpportunitiesList() {
   const clearAllFilters = () => {
     setQuery('')
     setCategory('all')
+    setPlatform('all')
     setMode('all')
     setPricingType('all')
     setSort('relevance')
     setPage(1)
   }
 
-  const hasActiveFilters = query || category !== 'all' || mode !== 'all' || pricingType !== 'all' || sort !== 'relevance'
+  const hasActiveFilters = query || category !== 'all' || platform !== 'all' || mode !== 'all' || pricingType !== 'all' || sort !== 'relevance'
 
   return (
     <>
@@ -188,6 +203,46 @@ function OpportunitiesList() {
                 }}
               >
                 {c.label}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Platform Pills for 8 Platforms */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          overflowX: 'auto',
+          paddingTop: '0.75rem',
+          marginTop: '0.75rem',
+          borderTop: '1px solid var(--border-subtle)',
+          scrollbarWidth: 'none',
+        }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+            Platforms:
+          </span>
+          {platforms.map((p) => {
+            const isSelected = platform === p.value
+            return (
+              <button
+                key={p.value}
+                type="button"
+                onClick={() => { setPlatform(p.value); setPage(1) }}
+                style={{
+                  padding: '0.25rem 0.7rem',
+                  borderRadius: 'var(--radius-full)',
+                  fontSize: '0.75rem',
+                  fontWeight: isSelected ? 700 : 500,
+                  border: isSelected ? '1px solid var(--accent-cyan)' : '1px solid var(--border-subtle)',
+                  background: isSelected ? 'var(--accent-cyan-subtle)' : 'transparent',
+                  color: isSelected ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {p.label}
               </button>
             )
           })}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { getCategoryBadgeClass, formatDeadline } from '../../../../lib/utils'
 import {
   ArrowLeft,
   CheckCircle,
@@ -10,7 +11,6 @@ import {
   Flag,
   ExternalLink,
   Loader2,
-  AlertTriangle,
 } from 'lucide-react'
 
 export default function ModerationQueuePage() {
@@ -206,7 +206,7 @@ export default function ModerationQueuePage() {
                     <span className={`badge ${isApproved ? 'badge-emerald' : isRejected ? 'badge-rose' : 'badge-amber'}`}>
                       Status: {opp.status}
                     </span>
-                    <span className="badge badge-indigo">{opp.category}</span>
+                    <span className={`badge ${getCategoryBadgeClass(opp.category)}`}>{opp.category}</span>
                     {opp.is_verified && <span className="badge badge-cyan">Verified</span>}
                     {opp.is_featured && <span className="badge badge-amber">★ Featured</span>}
                   </div>
@@ -214,7 +214,7 @@ export default function ModerationQueuePage() {
                     <Link href={`/opportunities/${opp.id}`}>{opp.title}</Link>
                   </h3>
                   <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
-                    {opp.organization} • {opp.mode} • Deadline: {opp.deadline ? new Date(opp.deadline).toLocaleDateString() : 'Rolling'}
+                    {opp.organization} • {opp.mode} • Deadline: {formatDeadline(opp.deadline).text}
                   </div>
                   {opp.moderation_reason && (
                     <div style={{ fontSize: '0.75rem', color: '#fda4af', marginTop: '0.25rem' }}>
