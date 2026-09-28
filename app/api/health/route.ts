@@ -11,7 +11,8 @@ export async function GET() {
     const supabase = await createClient()
     const { error } = await supabase
       .from('opportunities')
-      .select('*', { count: 'exact', head: true })
+      .select('id')
+      .limit(1)
 
     dbLatencyMs = Date.now() - startTime
 
