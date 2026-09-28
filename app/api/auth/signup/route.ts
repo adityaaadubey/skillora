@@ -62,6 +62,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // If identities array is empty, this email already exists in Supabase
+    if (user.identities && user.identities.length === 0) {
+      return NextResponse.json(
+        { error: 'An account with this email address already exists. Please sign in.' },
+        { status: 409 }
+      )
+    }
+
     // Automatically sign in with password so cookies are established immediately
     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
       email,

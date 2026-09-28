@@ -30,20 +30,30 @@ export async function POST(request: NextRequest) {
     }
 
     // Retrieve user profile to confirm role
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id, full_name, role, is_profile_complete')
-      .eq('id', data.user.id)
-      .maybeSingle()
+    let profile: any = null
+    try {
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('id, full_name, role, is_profile_complete')
+        .eq('id', data.user.id)
+        .maybeSingle()
+      profile = profileData
+    } catch {
+      // Non-fatal
+    }
 
-    // Log audit
-    await supabase.from('audit_logs').insert({
-      actor_id: data.user.id,
-      action: 'auth.password_login',
-      entity_type: 'user',
-      entity_id: data.user.id,
-      metadata: { email: data.user.email, role: profile?.role || 'student' },
-    })
+    // Log audit (non-blocking)
+    try {
+      await supabase.from('audit_logs').insert({
+        actor_id: data.user.id,
+        action: 'auth.password_login',
+        entity_type: 'user',
+        entity_id: data.user.id,
+        metadata: { email: data.user.email, role: profile?.role || 'student' },
+      })
+    } catch {
+      // Non-fatal
+    }
 
     return NextResponse.json({
       success: true,
