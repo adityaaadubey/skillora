@@ -6,6 +6,7 @@
 
   <p>
     <a href="https://skillora-aditya.vercel.app"><img src="https://img.shields.io/badge/Live%20Demo-skillora--aditya.vercel.app-6366f1?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" /></a>
+    <a href="docs/video/skillora_showcase_1min.mp4"><img src="https://img.shields.io/badge/Video%20Demo-1%20Min%20Walkthrough-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Video Demo" /></a>
     <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16.3-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" /></a>
     <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19-61dafb?style=for-the-badge&logo=react&logoColor=black" alt="React 19" /></a>
     <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
@@ -16,30 +17,39 @@
 
   <p>
     <a href="https://skillora-aditya.vercel.app"><strong>🌐 Visit Live App</strong></a> •
-    <a href="#key-features">Features</a> •
-    <a href="#ui-showcase">Screenshots</a> •
-    <a href="#system-architecture">Architecture</a> •
-    <a href="#project-structure">Project Structure</a> •
-    <a href="#api-reference">REST APIs</a> •
-    <a href="#getting-started">Getting Started</a> •
-    <a href="#database-schema">Database & RLS</a>
+    <a href="#-1-minute-video-walkthrough--voiceover-demo"><strong>🎬 Watch Video Demo</strong></a> •
+    <a href="#-key-features">Features</a> •
+    <a href="#-ui-showcase">Screenshots</a> •
+    <a href="#-system-architecture">Architecture</a> •
+    <a href="#-project-structure">Project Structure</a> •
+    <a href="#-api-reference">REST APIs</a> •
+    <a href="#-getting-started">Getting Started</a> •
+    <a href="#-test-suite">Tests</a>
   </p>
+
 </div>
+
+---
+
+> 💡 **Want to see how Skillora works in action?**  
+> Check out the **1-minute interactive video walkthrough below** or jump directly to the live production deployment at [**https://skillora-aditya.vercel.app**](https://skillora-aditya.vercel.app).
 
 ---
 
 ## 🎬 1-Minute Video Walkthrough & Voiceover Demo
 
-> 📺 **Watch the Full 1080p Video**: [**`docs/video/skillora_showcase_1min.mp4`**](docs/video/skillora_showcase_1min.mp4)  
+> 📺 **Download / Play High-Definition Video**: [**`docs/video/skillora_showcase_1min.mp4`**](docs/video/skillora_showcase_1min.mp4) *(1080p HD, 60 FPS, ~67 sec)*  
 > 🌐 **Official Live Platform**: [**https://skillora-aditya.vercel.app**](https://skillora-aditya.vercel.app)  
 > 📝 **Closed Captions**: [SRT Subtitles](docs/video/skillora_subtitles.srt) • [VTT Subtitles](docs/video/skillora_subtitles.vtt)
 
 <div align="center">
-  <a href="https://skillora-aditya.vercel.app">
+  <a href="docs/video/skillora_showcase_1min.mp4">
     <img src="docs/screenshots/hero_dark.png" alt="Skillora Video Walkthrough Preview" width="800" />
   </a>
-  <p><em>Click image above to visit the live site or <a href="docs/video/skillora_showcase_1min.mp4"><strong>download & play the video demo</strong></a>.</em></p>
+  <p><em>Click the image to play the video demo or visit the <a href="https://skillora-aditya.vercel.app"><strong>live website</strong></a>.</em></p>
 </div>
+
+### ⏱️ Video Timeline, Voiceover & Closed Captions (CC)
 
 | Timestamp | Scene | Voiceover Narration | Closed Captions (CC) |
 | :--- | :--- | :--- | :--- |
@@ -50,6 +60,14 @@
 | **0:40 - 0:48** | **Mobile Responsive** | *"It is fully responsive for mobile devices, enabling students to track opportunities on the go with zero friction."* | `[Mobile-First Responsive Interface]` |
 | **0:48 - 0:58** | **Security & Privacy** | *"Security is enterprise-grade with PostgreSQL Row Level Security, secure auth cookies, and GDPR self-service account deletion."* | `[PostgreSQL RLS + GDPR Right-to-Erasure]` |
 | **0:58 - 1:07** | **Live Production** | *"Skillora is live on Vercel with 100% passing tests. Explore the demo at skillora-aditya.vercel.app!"* | `[Live Demo: skillora-aditya.vercel.app]` |
+
+---
+
+## 🌟 Overview
+
+**Skillora** is an open-source, high-trust student opportunity intelligence platform. It eliminates spam and fragmented browsing by aggregating, deduplicating, verifying, and deterministically ranking tech internships, hackathons, scholarships, fellowships, and developer grants for university students and engineers.
+
+Unlike opaque AI recommenders, Skillora features a **100% explainable, deterministic relevance scoring engine** that matches candidates based on verified skills, academic background, location mode, and application deadlines.
 
 ---
 
@@ -88,7 +106,7 @@
 
 ### 2. 🎯 Deterministic Match Scoring Engine
 - **No Hallucinations**: 100% transparent and explainable mathematical scoring algorithm ($0–100\%$).
-- **Scoring Weights**:
+- **Scoring Breakdown**:
   - **35% Direct Skill Match**: Exact & fuzzy intersection of candidate skills (*Python, TypeScript, PyTorch, React, Docker*) with role requirements.
   - **20% Category Alignment**: Explicit track prioritization (Internships, Hackathons, Fellowships, Scholarships).
   - **15% Location & Work Mode Fit**: Remote-friendly boost and geographical campus proximity matching.
@@ -198,8 +216,12 @@ skillora/
 │   ├── functions_triggers.sql         # Account Deletion Stored Procedures & Triggers
 │   ├── seeds.sql                      # Demo Opportunities & Sources
 │   └── README.md                      # Database Schema & Entity Relationships
-├── docs/                              # Deep Technical Documentation
-│   ├── screenshots/                   # Repository Screenshots
+├── docs/                              # Technical Documentation & Assets
+│   ├── screenshots/                   # High-Res UI Screenshots
+│   ├── video/                         # 1-Minute Walkthrough Video & CC Subtitles
+│   │   ├── skillora_showcase_1min.mp4 # Full 1080p Video Walkthrough
+│   │   ├── skillora_subtitles.srt     # SRT Subtitles
+│   │   └── skillora_subtitles.vtt     # VTT Subtitles
 │   ├── ARCHITECTURE.md                # System Architecture & Relevance Formulas
 │   ├── BACKEND_API.md                 # Full REST API Reference
 │   └── FRONTEND.md                    # Design System & Component Guidelines
