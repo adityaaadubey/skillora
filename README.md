@@ -28,11 +28,28 @@
 
 ---
 
-## 🌟 Overview
+## 🎬 1-Minute Video Walkthrough & Voiceover Demo
 
-**Skillora** is an open-source, high-trust student opportunity intelligence platform. It eliminates spam and fragmented browsing by aggregating, deduplicating, verifying, and deterministically ranking tech internships, hackathons, scholarships, fellowships, and developer grants for university students and engineers.
+> 📺 **Watch the Full 1080p Video**: [**`docs/video/skillora_showcase_1min.mp4`**](docs/video/skillora_showcase_1min.mp4)  
+> 🌐 **Official Live Platform**: [**https://skillora-aditya.vercel.app**](https://skillora-aditya.vercel.app)  
+> 📝 **Closed Captions**: [SRT Subtitles](docs/video/skillora_subtitles.srt) • [VTT Subtitles](docs/video/skillora_subtitles.vtt)
 
-Unlike opaque AI recommenders, Skillora features a **100% explainable, deterministic relevance scoring engine** that matches candidates based on verified skills, academic background, location mode, and application deadlines.
+<div align="center">
+  <a href="https://skillora-aditya.vercel.app">
+    <img src="docs/screenshots/hero_dark.png" alt="Skillora Video Walkthrough Preview" width="800" />
+  </a>
+  <p><em>Click image above to visit the live site or <a href="docs/video/skillora_showcase_1min.mp4"><strong>download & play the video demo</strong></a>.</em></p>
+</div>
+
+| Timestamp | Scene | Voiceover Narration | Closed Captions (CC) |
+| :--- | :--- | :--- | :--- |
+| **0:00 - 0:10** | **Hero & Vision** | *"Welcome to Skillora, the high-trust student opportunity intelligence platform built on Next.js 16, React 19, and Supabase."* | `[Skillora: High-Trust Student Opportunity Intelligence]` |
+| **0:10 - 0:19** | **Verified Ingestion** | *"It automatically ingests and deduplicates internships, hackathons, and fellowships from Google, Devpost, and Unstop."* | `[Verified Sources & SHA-256 Deduplication]` |
+| **0:19 - 0:31** | **Deterministic Scoring** | *"Unlike black-box recommenders, Skillora provides a 100% explainable score based on skill match, category, location, and deadline urgency."* | `[Deterministic: 35% Skills + 20% Track + 15% Location + 30% Urgency]` |
+| **0:31 - 0:40** | **Glassmorphism UI** | *"The interface features rich glassmorphism styling, vibrant gradients, and instant dark and light mode transitions."* | `[Glassmorphism & Instant Dark/Light Mode]` |
+| **0:40 - 0:48** | **Mobile Responsive** | *"It is fully responsive for mobile devices, enabling students to track opportunities on the go with zero friction."* | `[Mobile-First Responsive Interface]` |
+| **0:48 - 0:58** | **Security & Privacy** | *"Security is enterprise-grade with PostgreSQL Row Level Security, secure auth cookies, and GDPR self-service account deletion."* | `[PostgreSQL RLS + GDPR Right-to-Erasure]` |
+| **0:58 - 1:07** | **Live Production** | *"Skillora is live on Vercel with 100% passing tests. Explore the demo at skillora-aditya.vercel.app!"* | `[Live Demo: skillora-aditya.vercel.app]` |
 
 ---
 
