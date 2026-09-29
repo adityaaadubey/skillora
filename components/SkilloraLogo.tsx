@@ -43,42 +43,37 @@ export function SkilloraLogo({
         userSelect: 'none',
       }}
     >
-      {/* Precision Squircle Emblem matching the official brand identity */}
+      {/* Official Skillora Logo Emblem from GitHub / Repo */}
       <div
         style={{
           width: `${box}px`,
           height: `${box}px`,
           borderRadius: `${radius}px`,
-          background: 'linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #8b5cf6 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#ffffff',
-          fontWeight: 800,
-          fontSize: `${font}px`,
-          lineHeight: 1,
-          boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
-          fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
           position: 'relative',
           overflow: 'hidden',
           flexShrink: 0,
+          background: 'transparent',
+          filter: 'drop-shadow(0 2px 8px rgba(99, 102, 241, 0.35))',
         }}
       >
-        {/* Subtle glass reflection highlight */}
-        <div
+        <img
+          src="/logo-icon.png"
+          alt="Skillora Official Logo"
+          width={box}
+          height={box}
           style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '45%',
-            background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 100%)',
-            borderTopLeftRadius: `${radius}px`,
-            borderTopRightRadius: `${radius}px`,
-            pointerEvents: 'none',
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            display: 'block',
+          }}
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = '/logo.png'
           }}
         />
-        <span>S</span>
       </div>
 
       {showText && (

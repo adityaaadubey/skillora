@@ -125,29 +125,8 @@ export function Navbar() {
             height: '68px',
           }}
         >
-          {/* Left: Sidebar Toggle + Brand Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
-            <button
-              onClick={() => setSidebarOpen(true)}
-              aria-label="Open navigation sidebar"
-              title="Open Navigation"
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: 'var(--radius-md)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                color: 'var(--text-secondary)',
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-              }}
-            >
-              <Menu size={19} />
-            </button>
-
+          {/* Left: Official Brand Logo */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <SkilloraLogo size="md" />
           </div>
 

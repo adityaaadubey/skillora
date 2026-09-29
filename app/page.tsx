@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '../lib/supabase/server'
 import { OpportunityCard } from '../components/OpportunityCard'
-import { ThreeLogoHero } from '../components/ThreeLogoHero'
+import { BrandHeroShowcase } from '../components/BrandHeroShowcase'
 import { SkillMatchSimulator } from '../components/SkillMatchSimulator'
 import { FounderSpotlight } from '../components/FounderSpotlight'
 import {
@@ -218,10 +218,8 @@ export default async function HomePage() {
             </a>
           </div>
 
-          {/* Interactive Three.js 3D Emblem Canvas */}
-          <div style={{ maxWidth: '780px', margin: '0 auto 2.5rem' }}>
-            <ThreeLogoHero />
-          </div>
+          {/* Official Brand Logo Showcase with Luxury Lighting & Telemetry */}
+          <BrandHeroShowcase />
 
           {/* Trust Metric Counters */}
           <div
