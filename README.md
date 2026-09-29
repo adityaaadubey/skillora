@@ -5,7 +5,7 @@
   <p><strong>High-Trust Student Opportunity Intelligence & Deterministic Matching Platform</strong></p>
 
   <p>
-    <a href="https://skillora.vercel.app"><img src="https://img.shields.io/badge/Live%20Platform-skillora.vercel.app-6366f1?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" /></a>
+    <a href="https://skillora-xi-beige.vercel.app"><img src="https://img.shields.io/badge/Live%20Platform-skillora--xi--beige.vercel.app-6366f1?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" /></a>
     <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16.3-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" /></a>
     <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19-61dafb?style=for-the-badge&logo=react&logoColor=black" alt="React 19" /></a>
     <a href="https://threejs.org"><img src="https://img.shields.io/badge/Three.js-WebGL%203D-black?style=for-the-badge&logo=three.js&logoColor=white" alt="Three.js" /></a>
@@ -15,7 +15,7 @@
   </p>
 
   <p>
-    <a href="https://skillora.vercel.app"><strong>🌐 Visit Live App</strong></a> •
+    <a href="https://skillora-xi-beige.vercel.app"><strong>🌐 Visit Live App (skillora-xi-beige.vercel.app)</strong></a> •
     <a href="#-key-features">Key Features</a> •
     <a href="#-threejs-3d-interactive-experience">Three.js 3D</a> •
     <a href="#-1-click-direct-in-app-apply">Direct Apply</a> •
@@ -26,6 +26,12 @@
   </p>
 
 </div>
+
+---
+
+> 🌐 **Official Production Deployment**: [**https://skillora-xi-beige.vercel.app**](https://skillora-xi-beige.vercel.app)  
+> 🚀 **All Changes Live**: Interactive 3D Three.js Hero, Founder Aditya Dubey Spotlight, 1-Click In-App Direct Apply, and 10+ Ingestion Pipes!
+
 
 ---
 
