@@ -4,7 +4,7 @@ import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { OpportunityCard } from '../../../components/OpportunityCard'
 import { Opportunity } from '../../../lib/database.types'
-import { Search, X, Filter, Loader2 } from 'lucide-react'
+import { Search, X, Filter, Loader2, Zap, ShieldCheck } from 'lucide-react'
 
 function OpportunitiesList() {
   const searchParams = useSearchParams()
@@ -12,11 +12,13 @@ function OpportunitiesList() {
   // State initialized from URL query params
   const [query, setQuery] = useState(searchParams.get('q') || '')
   const [category, setCategory] = useState(searchParams.get('category') || 'all')
-  const [platform, setPlatform] = useState(searchParams.get('platform') || 'all')
   const [mode, setMode] = useState(searchParams.get('mode') || 'all')
   const [pricingType, setPricingType] = useState(searchParams.get('pricing_type') || 'all')
   const [sort, setSort] = useState(searchParams.get('sort') || 'relevance')
   const [page, setPage] = useState(Number(searchParams.get('page') || 1))
+  const [quickFilter, setQuickFilter] = useState<'all' | 'direct' | 'verified' | 'remote'>(
+    searchParams.get('direct') === 'true' ? 'direct' : 'all'
+  )
 
   const [opportunities, setOpportunities] = useState<Opportunity[]>([])
   const [total, setTotal] = useState(0)
@@ -25,24 +27,18 @@ function OpportunitiesList() {
 
   const categories = [
     { label: 'All Tracks', value: 'all' },
-    { label: 'Internships', value: 'internship' },
-    { label: 'Hackathons', value: 'hackathon' },
+    { label: 'Engineering Internships', value: 'internship' },
+    { label: 'Global Hackathons', value: 'hackathon' },
+    { label: 'Fellowships & Grants', value: 'fellowship' },
     { label: 'Scholarships', value: 'scholarship' },
-    { label: 'Fellowships', value: 'fellowship' },
     { label: 'Competitions', value: 'competition' },
-    { label: 'Courses', value: 'course' },
   ]
 
-  const platforms = [
-    { label: 'All Platforms', value: 'all' },
-    { label: 'Google Careers', value: 'Google Careers' },
-    { label: 'Unstop', value: 'Unstop' },
-    { label: 'Hack2Skill', value: 'Hack2Skill' },
-    { label: 'Internshala', value: 'Internshala' },
-    { label: 'LinkedIn', value: 'LinkedIn' },
-    { label: 'Devfolio', value: 'Devfolio' },
-    { label: 'HackerEarth', value: 'HackerEarth' },
-    { label: 'Devpost', value: 'Devpost' },
+  const quickFilterPills = [
+    { label: 'All Opportunities', value: 'all' },
+    { label: '⚡ 1-Click Direct Apply', value: 'direct' },
+    { label: '🛡️ Skillora Verified Only', value: 'verified' },
+    { label: '🌐 Remote Work Only', value: 'remote' },
   ]
 
   // Synchronize URL and fetch results
@@ -53,7 +49,6 @@ function OpportunitiesList() {
     const params = new URLSearchParams()
     if (query) params.set('q', query)
     if (category !== 'all') params.set('category', category)
-    if (platform !== 'all') params.set('platform', platform)
     if (mode !== 'all') params.set('mode', mode)
     if (pricingType !== 'all') params.set('pricing_type', pricingType)
     if (sort !== 'relevance') params.set('sort', sort)
@@ -63,8 +58,17 @@ function OpportunitiesList() {
       .then((res) => res.json())
       .then((res) => {
         if (!ignore && res.data) {
-          setOpportunities(res.data)
-          setTotal(res.pagination?.total || 0)
+          let list = res.data
+
+          // Apply client-side quick filter
+          if (quickFilter === 'verified') {
+            list = list.filter((o: Opportunity) => o.is_verified)
+          } else if (quickFilter === 'remote') {
+            list = list.filter((o: Opportunity) => o.mode === 'remote')
+          }
+
+          setOpportunities(list)
+          setTotal(res.pagination?.total || list.length)
           setTotalPages(res.pagination?.totalPages || 1)
         }
       })
@@ -76,7 +80,7 @@ function OpportunitiesList() {
     return () => {
       ignore = true
     }
-  }, [query, category, platform, mode, pricingType, sort, page])
+  }, [query, category, mode, pricingType, sort, page, quickFilter])
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -86,14 +90,20 @@ function OpportunitiesList() {
   const clearAllFilters = () => {
     setQuery('')
     setCategory('all')
-    setPlatform('all')
     setMode('all')
     setPricingType('all')
     setSort('relevance')
+    setQuickFilter('all')
     setPage(1)
   }
 
-  const hasActiveFilters = query || category !== 'all' || platform !== 'all' || mode !== 'all' || pricingType !== 'all' || sort !== 'relevance'
+  const hasActiveFilters =
+    query ||
+    category !== 'all' ||
+    mode !== 'all' ||
+    pricingType !== 'all' ||
+    sort !== 'relevance' ||
+    quickFilter !== 'all'
 
   return (
     <>
@@ -103,7 +113,7 @@ function OpportunitiesList() {
           <div style={{ position: 'relative', flex: '1 1 280px' }}>
             <input
               type="text"
-              placeholder="Search by role, company, or tech stack (e.g. Next.js, AI, Google)..."
+              placeholder="Search by role, company, or tech stack (e.g. Next.js, AI, Python)..."
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value)
@@ -134,7 +144,7 @@ function OpportunitiesList() {
               <option value="all">Any Work Mode</option>
               <option value="remote">Remote Only</option>
               <option value="hybrid">Hybrid</option>
-              <option value="offline">In-Person</option>
+              <option value="on-site">In-Person</option>
             </select>
 
             <select
@@ -175,13 +185,15 @@ function OpportunitiesList() {
         </form>
 
         {/* Category Pills */}
-        <div style={{
-          display: 'flex',
-          gap: '0.5rem',
-          overflowX: 'auto',
-          paddingBottom: '0.25rem',
-          scrollbarWidth: 'none',
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '0.5rem',
+            overflowX: 'auto',
+            paddingBottom: '0.5rem',
+            scrollbarWidth: 'none',
+          }}
+        >
           {categories.map((c) => {
             const isSelected = category === c.value
             return (
@@ -190,7 +202,7 @@ function OpportunitiesList() {
                 type="button"
                 onClick={() => { setCategory(c.value); setPage(1) }}
                 style={{
-                  padding: '0.375rem 0.875rem',
+                  padding: '0.4rem 0.9rem',
                   borderRadius: 'var(--radius-full)',
                   fontSize: '0.8125rem',
                   fontWeight: isSelected ? 700 : 500,
@@ -208,34 +220,36 @@ function OpportunitiesList() {
           })}
         </div>
 
-        {/* Platform Pills for 8 Platforms */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          overflowX: 'auto',
-          paddingTop: '0.75rem',
-          marginTop: '0.75rem',
-          borderTop: '1px solid var(--border-subtle)',
-          scrollbarWidth: 'none',
-        }}>
+        {/* Quick Attribute Filter Pills (Replacing raw competitor platform names) */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            overflowX: 'auto',
+            paddingTop: '0.75rem',
+            marginTop: '0.5rem',
+            borderTop: '1px solid var(--border-subtle)',
+            scrollbarWidth: 'none',
+          }}
+        >
           <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
-            Platforms:
+            Filter:
           </span>
-          {platforms.map((p) => {
-            const isSelected = platform === p.value
+          {quickFilterPills.map((p) => {
+            const isSelected = quickFilter === p.value
             return (
               <button
                 key={p.value}
                 type="button"
-                onClick={() => { setPlatform(p.value); setPage(1) }}
+                onClick={() => { setQuickFilter(p.value as any); setPage(1) }}
                 style={{
-                  padding: '0.25rem 0.7rem',
+                  padding: '0.3rem 0.75rem',
                   borderRadius: 'var(--radius-full)',
-                  fontSize: '0.75rem',
+                  fontSize: '0.78rem',
                   fontWeight: isSelected ? 700 : 500,
                   border: isSelected ? '1px solid var(--accent-cyan)' : '1px solid var(--border-subtle)',
-                  background: isSelected ? 'var(--accent-cyan-subtle)' : 'transparent',
+                  background: isSelected ? 'var(--accent-cyan-subtle)' : 'var(--bg-surface)',
                   color: isSelected ? 'var(--accent-cyan)' : 'var(--text-secondary)',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
@@ -250,25 +264,28 @@ function OpportunitiesList() {
       </div>
 
       {/* Results Header */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: '1.5rem',
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '1.5rem',
+        }}
+      >
         <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-          Showing <strong style={{ color: 'var(--text-primary)' }}>{opportunities.length}</strong> of{' '}
-          <strong style={{ color: 'var(--text-primary)' }}>{total}</strong> verified opportunities
+          Showing <strong style={{ color: 'var(--text-primary)' }}>{opportunities.length}</strong> verified listings across 10+ ingested global pipes
         </div>
       </div>
 
       {/* Content Grid / Loading / Empty State */}
       {loading ? (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: '1.5rem',
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '1.5rem',
+          }}
+        >
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="glass-panel" style={{ height: '240px', padding: '1.25rem' }}>
               <div className="skeleton" style={{ width: '40%', height: '20px', marginBottom: '1rem' }} />
@@ -281,33 +298,37 @@ function OpportunitiesList() {
         </div>
       ) : opportunities.length === 0 ? (
         <div className="glass-panel" style={{ textAlign: 'center', padding: '4rem 1.5rem' }}>
-          <div style={{
-            width: '56px',
-            height: '56px',
-            borderRadius: '50%',
-            background: 'var(--bg-elevated)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--text-muted)',
-            marginBottom: '1rem',
-          }}>
+          <div
+            style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: 'var(--bg-elevated)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--text-muted)',
+              marginBottom: '1rem',
+            }}
+          >
             <Filter size={24} />
           </div>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>No opportunities matched your filters</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', maxWidth: '420px', margin: '0 auto 1.5rem' }}>
-            Try expanding your search query, switching categories, or clearing selected work modes.
+            Try clearing selected filters or expanding your search keyword.
           </p>
           <button onClick={clearAllFilters} className="btn btn-secondary">
             Clear all filters
           </button>
         </div>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: '1.5rem',
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '1.5rem',
+          }}
+        >
           {opportunities.map((opp: any) => (
             <OpportunityCard
               key={opp.id}
@@ -321,13 +342,15 @@ function OpportunitiesList() {
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '0.5rem',
-          marginTop: '3.5rem',
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginTop: '3.5rem',
+          }}
+        >
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
@@ -362,16 +385,18 @@ export default function OpportunitiesPage() {
           Discover Opportunities
         </h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem' }}>
-          Explore curated tech opportunities with deterministic match scoring, deadline tracking, and verified provenance.
+          Explore curated tech opportunities aggregated from 10+ global pipes with deterministic match scoring, deadline tracking, and 1-click direct apply.
         </p>
       </div>
 
-      <Suspense fallback={
-        <div style={{ padding: '3rem 0', textAlign: 'center' }}>
-          <Loader2 size={32} className="animate-spin" style={{ margin: '0 auto 1rem', color: 'var(--accent-indigo)' }} />
-          <p style={{ color: 'var(--text-secondary)' }}>Loading discovery catalogue...</p>
-        </div>
-      }>
+      <Suspense
+        fallback={
+          <div style={{ padding: '3rem 0', textAlign: 'center' }}>
+            <Loader2 size={32} className="animate-spin" style={{ margin: '0 auto 1rem', color: 'var(--accent-indigo)' }} />
+            <p style={{ color: 'var(--text-secondary)' }}>Loading discovery catalogue...</p>
+          </div>
+        }
+      >
         <OpportunitiesList />
       </Suspense>
     </div>

@@ -2,7 +2,8 @@
 
 import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { formatDeadline, getCategoryBadgeClass, formatCompensation } from '../../../../lib/utils'
+import { formatDeadline, getCategoryBadgeClass, formatCompensation, getSanitizedWorkingUrl } from '../../../../lib/utils'
+import { DirectApplyModal } from '../../../../components/DirectApplyModal'
 import {
   ArrowLeft,
   Bookmark,
@@ -15,10 +16,10 @@ import {
   DollarSign,
   Award,
   Sparkles,
-  CheckCircle2,
   Building2,
   Clock,
   Loader2,
+  Zap,
 } from 'lucide-react'
 
 export default function OpportunityDetailPage({
@@ -33,6 +34,7 @@ export default function OpportunityDetailPage({
   const [error, setError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [showDirectModal, setShowDirectModal] = useState(false)
 
   // Reminder modal state
   const [showReminderModal, setShowReminderModal] = useState(false)
@@ -160,6 +162,7 @@ export default function OpportunityDetailPage({
 
   const opp = data.opportunity
   const relevance = data.relevance
+  const safeUrl = getSanitizedWorkingUrl(opp.application_url || opp.canonical_url, opp.organization, opp.title)
 
   return (
     <div className="container" style={{ paddingTop: '2rem', paddingBottom: '5rem' }}>
@@ -173,18 +176,21 @@ export default function OpportunityDetailPage({
             gap: '0.375rem',
             color: 'var(--text-muted)',
             fontSize: '0.875rem',
+            textDecoration: 'none',
           }}
         >
           <ArrowLeft size={16} />
-          <span>Back to Explore</span>
+          <span>Back to Opportunities</span>
         </Link>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr',
-        gap: '2rem',
-      }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr',
+          gap: '2rem',
+        }}
+      >
         <style jsx>{`
           @media (min-width: 992px) {
             .detail-layout {
@@ -201,56 +207,71 @@ export default function OpportunityDetailPage({
               {/* Badges */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
                 <span className={`badge ${getCategoryBadgeClass(opp.category)}`}>{opp.category}</span>
-                {opp.platform && (
-                  <span
-                    className={`badge-platform badge-platform-${opp.platform.toLowerCase().replace(/\s+/g, '-')}`}
-                    title={`Opportunity hosted on ${opp.platform}`}
-                  >
-                    {opp.platform}
-                  </span>
-                )}
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: 'var(--radius-full)',
+                    background: 'rgba(99, 102, 241, 0.15)',
+                    color: 'var(--accent-indigo)',
+                    border: '1px solid rgba(99, 102, 241, 0.3)',
+                  }}
+                >
+                  <Zap size={12} />
+                  <span>1-Click Direct Apply</span>
+                </span>
                 {opp.is_verified && (
                   <span className="badge badge-emerald">
                     <ShieldCheck size={13} /> Verified
                   </span>
                 )}
                 {opp.is_featured && <span className="badge badge-amber">Featured</span>}
-                <span className="badge badge-cyan">{opp.mode}</span>
+                <span className="badge badge-cyan" style={{ textTransform: 'capitalize' }}>{opp.mode}</span>
                 {opp.pricing_type === 'free' && <span className="badge badge-emerald">100% Free</span>}
               </div>
 
               {/* Title & Organization */}
-              <h1 style={{
-                fontSize: 'clamp(1.5rem, 3vw, 2.25rem)',
-                fontWeight: 800,
-                lineHeight: 1.25,
-                marginBottom: '0.5rem',
-              }}>
+              <h1
+                style={{
+                  fontSize: 'clamp(1.5rem, 3vw, 2.25rem)',
+                  fontWeight: 800,
+                  lineHeight: 1.25,
+                  marginBottom: '0.5rem',
+                }}
+              >
                 {opp.title}
               </h1>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                fontSize: '1rem',
-                color: 'var(--text-secondary)',
-                marginBottom: '1.5rem',
-              }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontSize: '1rem',
+                  color: 'var(--text-secondary)',
+                  marginBottom: '1.5rem',
+                }}
+              >
                 <Building2 size={18} color="var(--accent-indigo)" />
                 <span style={{ fontWeight: 600 }}>{opp.organization}</span>
               </div>
 
               {/* Meta Grid */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                gap: '1rem',
-                padding: '1.25rem',
-                background: 'var(--bg-surface)',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--border-subtle)',
-                marginBottom: '2rem',
-              }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                  gap: '1rem',
+                  padding: '1.25rem',
+                  background: 'var(--bg-surface)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-subtle)',
+                  marginBottom: '2rem',
+                }}
+              >
                 <div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.25rem' }}>
                     Deadline
@@ -312,7 +333,7 @@ export default function OpportunityDetailPage({
 
               {/* Description */}
               <div style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '0.75rem' }}>Overview</h2>
+                <h2 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '0.75rem' }}>Overview & Details</h2>
                 <div style={{ fontSize: '0.9375rem', lineHeight: 1.7, color: 'var(--text-secondary)', whiteSpace: 'pre-line' }}>
                   {opp.description}
                 </div>
@@ -354,20 +375,21 @@ export default function OpportunityDetailPage({
               )}
 
               {/* Source Provenance */}
-              <div style={{
-                padding: '1rem',
-                background: 'rgba(0, 0, 0, 0.25)',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--border-subtle)',
-                fontSize: '0.8125rem',
-                color: 'var(--text-muted)',
-              }}>
+              <div
+                style={{
+                  padding: '1rem',
+                  background: 'rgba(0, 0, 0, 0.25)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-subtle)',
+                  fontSize: '0.8125rem',
+                  color: 'var(--text-muted)',
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', marginBottom: '0.25rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
                   <ShieldCheck size={15} color="var(--accent-emerald)" />
                   <span>Verified Provenance & Audit Trail</span>
                 </div>
-                <div>Source: {opp.opportunity_sources?.name || 'Verified Partner Feed'} • Trust Score: {Math.round((opp.opportunity_sources?.trust_score || 0.95) * 100)}%</div>
-                <div style={{ wordBreak: 'break-all', marginTop: '0.25rem' }}>Canonical URL: {opp.canonical_url || opp.application_url}</div>
+                <div>Status: Verified Pipeline • Ingested via Skillora Autonomous Feed Adapter</div>
               </div>
             </div>
           </div>
@@ -376,15 +398,44 @@ export default function OpportunityDetailPage({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {/* Action Box */}
             <div className="glass-panel" style={{ padding: '1.5rem' }}>
+              {/* Primary Action: Direct In-App Apply */}
+              <button
+                onClick={() => setShowDirectModal(true)}
+                className="btn btn-primary"
+                style={{
+                  width: '100%',
+                  padding: '0.875rem',
+                  fontSize: '1rem',
+                  marginBottom: '0.75rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                <Zap size={18} />
+                <span>Direct Apply on Skillora</span>
+              </button>
+
+              {/* Secondary Action: Verified Official Link */}
               <a
-                href={opp.canonical_url || opp.application_url}
+                href={safeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-primary"
-                style={{ width: '100%', padding: '0.875rem', fontSize: '1rem', marginBottom: '0.75rem' }}
+                className="btn btn-outline"
+                style={{
+                  width: '100%',
+                  padding: '0.625rem',
+                  fontSize: '0.875rem',
+                  marginBottom: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.375rem',
+                }}
               >
-                <span>Apply on {opp.platform || 'Official Site'}</span>
-                <ExternalLink size={18} />
+                <span>Visit Official Portal</span>
+                <ExternalLink size={14} />
               </a>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1rem' }}>
@@ -437,11 +488,13 @@ export default function OpportunityDetailPage({
                     <Sparkles size={16} color="var(--accent-indigo)" />
                     <span>Relevance Intelligence</span>
                   </div>
-                  <span style={{
-                    fontSize: '1.125rem',
-                    fontWeight: 800,
-                    color: relevance.totalScore >= 75 ? 'var(--accent-emerald)' : 'var(--accent-indigo)',
-                  }}>
+                  <span
+                    style={{
+                      fontSize: '1.125rem',
+                      fontWeight: 800,
+                      color: relevance.totalScore >= 75 ? 'var(--accent-emerald)' : 'var(--accent-indigo)',
+                    }}
+                  >
                     {relevance.totalScore}%
                   </span>
                 </div>
@@ -477,37 +530,34 @@ export default function OpportunityDetailPage({
                     </div>
                   </div>
                 </div>
-
-                <div style={{ fontSize: '0.8125rem' }}>
-                  <div style={{ fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Explanation factors:</div>
-                  <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-                    {relevance.explanationTags.map((tag: string, i: number) => (
-                      <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: 'var(--text-secondary)' }}>
-                        <CheckCircle2 size={14} color="var(--accent-emerald)" />
-                        <span>{tag}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
               </div>
             )}
           </div>
         </div>
       </div>
 
+      {/* Direct Apply In-App Modal */}
+      <DirectApplyModal
+        opportunity={opp}
+        isOpen={showDirectModal}
+        onClose={() => setShowDirectModal(false)}
+      />
+
       {/* Reminder Modal */}
       {showReminderModal && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.7)',
-          backdropFilter: 'blur(8px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '1rem',
-          zIndex: 100,
-        }}>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.7)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            zIndex: 100,
+          }}
+        >
           <div className="glass-panel" style={{ width: '100%', maxWidth: '420px', padding: '2rem' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>Set Application Reminder</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
@@ -551,17 +601,19 @@ export default function OpportunityDetailPage({
 
       {/* Report Modal */}
       {showReportModal && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.7)',
-          backdropFilter: 'blur(8px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '1rem',
-          zIndex: 100,
-        }}>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.7)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            zIndex: 100,
+          }}
+        >
           <div className="glass-panel" style={{ width: '100%', maxWidth: '460px', padding: '2rem' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>Report Listing Issue</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>

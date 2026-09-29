@@ -4,7 +4,23 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { createClient } from '../lib/supabase/client'
-import { Compass, Bookmark, LayoutDashboard, Shield, LogIn, LogOut, User, Bell, Sun, Moon } from 'lucide-react'
+import { SkilloraLogo } from './SkilloraLogo'
+import { Sidebar } from './Sidebar'
+import { PostOpportunityModal } from './PostOpportunityModal'
+import {
+  Compass,
+  Bookmark,
+  LayoutDashboard,
+  Shield,
+  LogIn,
+  LogOut,
+  User,
+  Sun,
+  Moon,
+  Menu,
+  PlusCircle,
+  Zap,
+} from 'lucide-react'
 
 export function Navbar() {
   const pathname = usePathname()
@@ -13,9 +29,10 @@ export function Navbar() {
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [postModalOpen, setPostModalOpen] = useState(false)
 
   useEffect(() => {
-    // Detect active theme
     const activeTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'
     setTheme(activeTheme)
 
@@ -79,6 +96,7 @@ export function Navbar() {
 
   const navLinks = [
     { href: '/opportunities', label: 'Explore', icon: Compass },
+    { href: '/opportunities?direct=true', label: 'Direct Apply', icon: Zap },
     { href: '/saved', label: 'Saved', icon: Bookmark, authOnly: true },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, authOnly: true },
   ]
@@ -86,234 +104,314 @@ export function Navbar() {
   const isAdmin = profile?.role === 'admin'
 
   return (
-    <header style={{
-      position: 'sticky',
-      top: 0,
-      zIndex: 50,
-      background: 'var(--bg-glass)',
-      backdropFilter: 'blur(16px)',
-      WebkitBackdropFilter: 'blur(16px)',
-      borderBottom: '1px solid var(--border-subtle)',
-    }}>
-      <div className="container" style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        height: '68px',
-      }}>
-        {/* Brand Logo */}
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-          <div style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, var(--accent-indigo), var(--accent-cyan))',
+    <>
+      <header
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          background: 'var(--bg-glass)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          borderBottom: '1px solid var(--border-subtle)',
+        }}
+      >
+        <div
+          className="container"
+          style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontWeight: 800,
-            fontSize: '1.125rem',
-            boxShadow: '0 0 16px rgba(99, 102, 241, 0.4)'
-          }}>
-            S
-          </div>
-          <div>
-            <span style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
-              Skill<span style={{ color: 'var(--accent-indigo)' }}>ora</span>
-            </span>
-          </div>
-        </Link>
+            justifyContent: 'space-between',
+            height: '68px',
+          }}
+        >
+          {/* Left: Sidebar Toggle + Brand Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+            <button
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open navigation sidebar"
+              title="Open Navigation"
+              style={{
+                width: '38px',
+                height: '38px',
+                borderRadius: 'var(--radius-md)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                transition: 'all var(--transition-fast)',
+              }}
+            >
+              <Menu size={19} />
+            </button>
 
-        {/* Desktop Navigation Links */}
-        <nav style={{ display: 'none', gap: '1.5rem', alignItems: 'center' }} className="desktop-nav">
-          <style jsx>{`
-            @media (min-width: 768px) {
-              .desktop-nav {
-                display: flex !important;
+            <SkilloraLogo size="md" />
+          </div>
+
+          {/* Desktop Navigation Links */}
+          <nav style={{ display: 'none', gap: '1.25rem', alignItems: 'center' }} className="desktop-nav">
+            <style jsx>{`
+              @media (min-width: 820px) {
+                .desktop-nav {
+                  display: flex !important;
+                }
               }
-            }
-          `}</style>
-          {navLinks.map((link) => {
-            if (link.authOnly && !user) return null
-            const Icon = link.icon
-            const isActive = pathname.startsWith(link.href)
-            return (
+            `}</style>
+            {navLinks.map((link) => {
+              if (link.authOnly && !user) return null
+              const Icon = link.icon
+              const isActive = pathname.startsWith(link.href)
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.375rem',
+                    fontSize: '0.9375rem',
+                    fontWeight: 500,
+                    color: isActive ? 'var(--accent-indigo)' : 'var(--text-secondary)',
+                    padding: '0.5rem 0.75rem',
+                    borderRadius: 'var(--radius-md)',
+                    transition: 'all var(--transition-fast)',
+                    background: isActive ? 'var(--accent-indigo-subtle)' : 'transparent',
+                    textDecoration: 'none',
+                  }}
+                >
+                  <Icon size={16} />
+                  <span>{link.label}</span>
+                </Link>
+              )
+            })}
+
+            {isAdmin && (
               <Link
-                key={link.href}
-                href={link.href}
+                href="/admin"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.375rem',
                   fontSize: '0.9375rem',
-                  fontWeight: 500,
-                  color: isActive ? 'var(--accent-indigo)' : 'var(--text-secondary)',
-                  padding: '0.5rem 0.75rem',
+                  fontWeight: 600,
+                  color: '#f59e0b',
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  padding: '0.375rem 0.75rem',
                   borderRadius: 'var(--radius-md)',
-                  transition: 'all var(--transition-fast)',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  textDecoration: 'none',
                 }}
               >
-                <Icon size={17} />
-                <span>{link.label}</span>
+                <Shield size={16} />
+                <span>Admin Console</span>
               </Link>
-            )
-          })}
+            )}
+          </nav>
 
-          {isAdmin && (
-            <Link
-              href="/admin"
+          {/* Right Actions: Post Opportunity, Theme, Auth */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            {/* Post Opportunity Button */}
+            <button
+              onClick={() => setPostModalOpen(true)}
+              className="btn btn-secondary"
               style={{
+                display: 'none',
+                padding: '0.45rem 0.875rem',
+                fontSize: '0.8125rem',
+                gap: '0.375rem',
+                alignItems: 'center',
+              }}
+              id="desktop-host-btn"
+            >
+              <PlusCircle size={15} />
+              <span>Host / Post</span>
+            </button>
+            <style jsx>{`
+              @media (min-width: 640px) {
+                #desktop-host-btn {
+                  display: inline-flex !important;
+                }
+              }
+            `}</style>
+
+            {/* Theme Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: 'var(--radius-md)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.375rem',
-                fontSize: '0.9375rem',
-                fontWeight: 600,
-                color: '#f59e0b',
-                background: 'rgba(245, 158, 11, 0.1)',
-                padding: '0.375rem 0.75rem',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid rgba(245, 158, 11, 0.3)',
+                justifyContent: 'center',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                transition: 'all var(--transition-fast)',
               }}
             >
-              <Shield size={16} />
-              <span>Admin Console</span>
-            </Link>
-          )}
-        </nav>
+              {theme === 'dark' ? <Sun size={17} color="#fbbf24" /> : <Moon size={17} color="#6366f1" />}
+            </button>
 
-        {/* Right Action Profile / Login & Theme Toggle */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
-          {/* Theme Toggle Button */}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: 'var(--radius-md)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border-subtle)',
-              color: 'var(--text-secondary)',
-              cursor: 'pointer',
-              transition: 'all var(--transition-fast)',
-            }}
-          >
-            {theme === 'dark' ? (
-              <Sun size={17} style={{ color: '#f59e0b' }} />
+            {/* User Auth state */}
+            {loading ? (
+              <div
+                style={{
+                  width: '78px',
+                  height: '36px',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'var(--bg-surface)',
+                }}
+              />
+            ) : user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Link
+                  href="/dashboard"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-subtle)',
+                    textDecoration: 'none',
+                    color: 'var(--text-primary)',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  <User size={15} color="var(--accent-indigo)" />
+                  <span style={{ maxWidth: '100px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {profile?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'User'}
+                  </span>
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  aria-label="Sign out"
+                  title="Sign Out"
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-subtle)',
+                    color: 'var(--text-muted)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <LogOut size={16} />
+                </button>
+              </div>
             ) : (
-              <Moon size={17} style={{ color: '#6366f1' }} />
-            )}
-          </button>
-
-          {!loading && (
-            <>
-              {user ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <Link
-                    href="/reminders"
-                    title="Reminders"
-                    style={{
-                      width: '36px',
-                      height: '36px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: 'var(--radius-md)',
-                      color: 'var(--text-secondary)',
-                      background: 'var(--bg-surface)',
-                      border: '1px solid var(--border-subtle)',
-                    }}
-                  >
-                    <Bell size={17} />
-                  </Link>
-                  <Link
-                    href="/profile"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.375rem 0.625rem',
-                      borderRadius: 'var(--radius-md)',
-                      background: 'var(--bg-surface)',
-                      border: '1px solid var(--border-subtle)',
-                    }}
-                  >
-                    <div style={{
-                      width: '26px',
-                      height: '26px',
-                      borderRadius: '50%',
-                      background: 'var(--accent-indigo-subtle)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--accent-indigo)',
-                    }}>
-                      <User size={15} />
-                    </div>
-                    <span style={{ fontSize: '0.875rem', fontWeight: 600, maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {profile?.full_name || user.email?.split('@')[0]}
-                    </span>
-                  </Link>
-
-                  <button
-                    onClick={handleLogout}
-                    title="Sign Out"
-                    className="btn btn-outline"
-                    style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                  >
-                    <LogOut size={15} />
-                    <span style={{ display: 'none' }} className="logout-text">Sign Out</span>
-                    <style jsx>{`
-                      @media (min-width: 640px) {
-                        .logout-text { display: inline !important; }
-                      }
-                    `}</style>
-                  </button>
-                </div>
-              ) : (
-                <Link href="/login" className="btn btn-primary" style={{ padding: '0.5rem 1.125rem' }}>
-                  <LogIn size={16} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Link
+                  href="/login"
+                  className="btn btn-primary"
+                  style={{
+                    padding: '0.45rem 1rem',
+                    fontSize: '0.875rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.375rem',
+                  }}
+                >
+                  <LogIn size={15} />
                   <span>Sign In</span>
                 </Link>
-              )}
-            </>
-          )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* Global Collapsible Sidebar */}
+      <Sidebar
+        isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
+      />
+
+      {/* Global Post Opportunity Modal */}
+      <PostOpportunityModal
+        isOpen={postModalOpen}
+        onClose={() => setPostModalOpen(false)}
+      />
+    </>
   )
 }
 
 export function MobileNav() {
   const pathname = usePathname()
 
-  const tabs = [
+  const links = [
+    { href: '/', label: 'Home', icon: Compass },
     { href: '/opportunities', label: 'Explore', icon: Compass },
-    { href: '/saved', label: 'Saved', icon: Bookmark },
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/profile', label: 'Profile', icon: User },
+    { href: '/opportunities?direct=true', label: 'Direct', icon: Zap },
+    { href: '/post-opportunity', label: 'Post', icon: PlusCircle },
+    { href: '/dashboard', label: 'Track', icon: LayoutDashboard },
   ]
 
   return (
-    <nav className="mobile-nav" aria-label="Mobile Navigation">
-      {tabs.map((tab) => {
-        const Icon = tab.icon
-        const isActive = pathname === tab.href || pathname.startsWith(tab.href + '/')
+    <nav
+      className="mobile-bottom-nav"
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: '60px',
+        background: 'var(--bg-glass)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderTop: '1px solid var(--border-subtle)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        zIndex: 40,
+        padding: '0 0.5rem',
+      }}
+    >
+      <style jsx>{`
+        @media (min-width: 768px) {
+          .mobile-bottom-nav {
+            display: none !important;
+          }
+        }
+      `}</style>
+      {links.map((item) => {
+        const Icon = item.icon
+        const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
         return (
           <Link
-            key={tab.href}
-            href={tab.href}
-            className={`mobile-nav-item ${isActive ? 'active' : ''}`}
-            aria-current={isActive ? 'page' : undefined}
+            key={item.href}
+            href={item.href}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.2rem',
+              color: isActive ? 'var(--accent-indigo)' : 'var(--text-muted)',
+              fontSize: '0.6875rem',
+              fontWeight: isActive ? 700 : 500,
+              textDecoration: 'none',
+              padding: '0.35rem 0.6rem',
+              borderRadius: 'var(--radius-md)',
+            }}
           >
-            <Icon size={20} strokeWidth={isActive ? 2.5 : 1.75} />
-            <span>{tab.label}</span>
+            <Icon size={18} />
+            <span>{item.label}</span>
           </Link>
         )
       })}
