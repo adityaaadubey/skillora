@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="public/logo-full.png" alt="Skillora Logo" width="360" />
+  <img src="public/logo-full.png" alt="Skillora Logo" width="320" />
 
   <p><strong>High-Trust Student Opportunity Intelligence & Deterministic Matching Platform</strong></p>
 
@@ -17,7 +17,7 @@
     <a href="https://skillora-live.vercel.app"><strong>🌐 Visit Live App (skillora-live.vercel.app)</strong></a> •
     <a href="#-key-features">Key Features</a> •
     <a href="#-1-click-direct-in-app-apply">Direct Apply</a> •
-    <a href="#-founder--contact">Founder & Contact</a> •
+    <a href="#-founder--leadership">Founder & Contact</a> •
     <a href="#-system-architecture">Architecture</a> •
     <a href="#-getting-started">Getting Started</a> •
     <a href="#-test-suite">Tests</a>
@@ -28,8 +28,7 @@
 ---
 
 > 🌐 **Official Production Deployment**: [**https://skillora-live.vercel.app**](https://skillora-live.vercel.app) *(Alternate: [https://skillora-space.vercel.app](https://skillora-space.vercel.app))*  
-> 🚀 **All Changes Live**: Official Skillora Brand Identity, Founder Aditya Dubey Spotlight, 1-Click In-App Direct Apply, and 10+ Ingestion Pipes!
-
+> 🚀 **All Systems Verified**: Official Transparent Brand Identity, Founder Aditya Dubey Spotlight, Verified 1-Click Direct Apply, and 10+ Ingestion Pipes!
 
 ---
 
@@ -41,24 +40,25 @@ Built for all university students, emerging developers, and event organizers wor
 
 ---
 
-## 🎨 Three.js 3D Interactive Experience
+## 🎨 Official Brand Identity & Luxury Hero Showcase
 
-Skillora features a custom WebGL 3D sculptural emblem built with Three.js:
-- **Organic Parametric Geometry**: Smooth, fluid, breathing parametric form that ripples with dynamic vertex sine-wave displacement.
-- **Dual-Theme Adaptive Shaders**:
-  - *Dark Mode*: Deep obsidian void with luminescent indigo, radiant violet, and cyan stardust orbital rings.
-  - *Light Mode*: Luminous rose quartz, opal glass reflections, and warm champagne ambient depth.
-- **Mouse & Touch Interactive**: Follows cursor with silky lerping, with interactive click pulses.
+Skillora features a custom luxury brand showcase centered around the authentic transparent Skillora identity:
+- **Pristine Transparent Emblem**: Graduation cap integrated with an energetic student figure, yellow star, and purple tassel on 100% transparent vector-quality canvas.
+- **Dynamic Ambient Aura**: Multi-layered radial glow with indigo, electric cyan, and violet breathing animations.
+- **Dual-Theme Adaptive Aesthetics**:
+  - *Dark Mode*: Deep obsidian glass with glowing ambient highlights and luminous typography.
+  - *Light Mode*: Crisp pearl glass reflections, clean text contrast, and refined borders.
+- **Interactive Micro-Interactions**: Hover elevation, subtle floating animations, and live status pills.
 
 ---
 
-## ⚡ 1-Click Direct In-App Apply (Zero Redirections)
+## ⚡ 1-Click Direct In-App Apply (Authenticated & Secure)
 
-Unlike typical aggregators that redirect students to external tracking forms, Skillora enables **direct in-app application and event registration**:
-- Candidates apply or register in 1 click directly inside the platform.
-- Generates a verified application reference code (e.g. `SKL-2026-APP-XXXX`).
-- Automatically logs application status in the candidate's dashboard (`Submitted`, `Under Review`, `Shortlisted`, `Accepted`).
-- Zero tracking cookies, encrypted applicant data.
+Unlike typical aggregators that redirect students to external tracking forms and phishing loops, Skillora enables **direct in-app application and registration**:
+- **Authenticated Access**: Direct apply links and submission portals require verified student accounts to prevent spam and protect student credentials.
+- **Instant Verifiable Token**: Generates unique application codes (e.g. `SKL-2026-APP-XXXX`).
+- **Dashboard Synchronization**: Automatically logs application progress in the student dashboard (`Submitted`, `Under Review`, `Shortlisted`, `Accepted`).
+- **Privacy First**: Zero tracking cookies, encrypted candidate data, and zero external redirects.
 
 ---
 
@@ -92,7 +92,7 @@ Skillora was envisioned, designed, and architected by **Aditya Dubey**.
    - `20%` Category & Track Alignment
    - `15%` Work Mode (Remote/Hybrid/On-site)
    - `30%` Deadline Urgency & Verified Trust Boost
-3. **Collapsible Full-Featured Sidebar**: Navigation, Direct Apply Hub, Track Filters, Organizer Suite, and Telemetry.
+3. **Clean Sleek Header**: Direct brand logo start without clutter or awkward menu icons.
 4. **Guaranteed Working Links**: Runtime URL resolver that eliminates 404s and strips tracking parameters.
 5. **Auto-Sync Engine**: Periodic live telemetry endpoint (`/api/sync`) keeping directory data fresh and synchronized.
 
@@ -100,9 +100,8 @@ Skillora was envisioned, designed, and architected by **Aditya Dubey**.
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 16 (App Router)
+- **Framework**: Next.js 16 (App Router with Turbopack)
 - **UI Library**: React 19
-- **3D Graphics**: Three.js (WebGL)
 - **Database**: Supabase (PostgreSQL + Row Level Security)
 - **Styling**: Vanilla CSS Design System with Glassmorphism
 - **Validation**: Zod schema validation

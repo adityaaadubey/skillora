@@ -1,6 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { createClient } from '../lib/supabase/client'
 import { Opportunity } from '../lib/database.types'
 import {
   X,
@@ -45,6 +47,20 @@ export function DirectApplyModal({
   const [submitted, setSubmitted] = useState(false)
   const [applicationId, setApplicationId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [user, setUser] = useState<any>(null)
+  const [authChecked, setAuthChecked] = useState(false)
+
+  useEffect(() => {
+    if (!isOpen) return
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user)
+      if (data.user?.email && !email) {
+        setEmail(data.user.email)
+      }
+      setAuthChecked(true)
+    })
+  }, [isOpen])
 
   if (!isOpen || !opportunity) return null
 
@@ -231,6 +247,71 @@ export function DirectApplyModal({
               <button onClick={handleReset} className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>
                 Done
               </button>
+            </div>
+          </div>
+        ) : !user ? (
+          /* Authentication Gate */
+          <div style={{ textAlign: 'center', padding: '2.5rem 1rem' }}>
+            <div
+              style={{
+                width: '68px',
+                height: '68px',
+                borderRadius: '50%',
+                background: 'rgba(99, 102, 241, 0.12)',
+                color: 'var(--accent-indigo)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 1.25rem',
+                border: '1px solid rgba(99, 102, 241, 0.3)',
+              }}
+            >
+              <ShieldCheck size={34} />
+            </div>
+
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                padding: '0.25rem 0.75rem',
+                borderRadius: 'var(--radius-full)',
+                background: 'rgba(99, 102, 241, 0.12)',
+                color: 'var(--accent-indigo)',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '0.75rem',
+              }}
+            >
+              <Sparkles size={12} />
+              <span>Authentication Required</span>
+            </div>
+
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+              Sign In to Direct Apply
+            </h2>
+
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', lineHeight: 1.6, maxWidth: '440px', margin: '0 auto 1.75rem' }}>
+              Skillora 1-Click Direct Apply submits verified credentials and tracks application status directly without third-party spam. Please sign in or register to submit an application.
+            </p>
+
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Link
+                href="/login"
+                className="btn btn-primary"
+                style={{ padding: '0.65rem 1.5rem', fontSize: '0.875rem' }}
+              >
+                Sign In to Apply
+              </Link>
+              <Link
+                href="/register"
+                className="btn btn-secondary"
+                style={{ padding: '0.65rem 1.5rem', fontSize: '0.875rem' }}
+              >
+                Create Account
+              </Link>
             </div>
           </div>
         ) : (

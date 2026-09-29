@@ -45,10 +45,15 @@ export async function POST(
     const randomCode = Math.floor(100000 + Math.random() * 900000)
     const applicationId = `SKL-${new Date().getFullYear()}-${randomCode}`
 
-    // 2. Check if user is logged in
+    // 2. Enforce authentication for Direct Apply
     const { data: { user } } = await supabase.auth.getUser()
 
-    if (user) {
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please sign in or create an account to submit a direct application.' },
+        { status: 401 }
+      )
+    }
       // Upsert into saved_opportunities with status 'applied' and rich note
       const applicationNote = JSON.stringify({
         applicationId,
@@ -73,7 +78,6 @@ export async function POST(
           note: applicationNote,
           updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id,opportunity_id' })
-    }
 
     // 3. Log application click / submission in telemetry
     try {

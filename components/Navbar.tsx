@@ -96,7 +96,7 @@ export function Navbar() {
 
   const navLinks = [
     { href: '/opportunities', label: 'Explore', icon: Compass },
-    { href: '/opportunities?direct=true', label: 'Direct Apply', icon: Zap },
+    { href: '/opportunities?direct=true', label: 'Direct Apply', icon: Zap, authOnly: true },
     { href: '/saved', label: 'Saved', icon: Bookmark, authOnly: true },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, authOnly: true },
   ]
@@ -332,13 +332,23 @@ export function Navbar() {
 
 export function MobileNav() {
   const pathname = usePathname()
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => setUser(data.user))
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user ?? null)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
   const links = [
     { href: '/', label: 'Home', icon: Compass },
     { href: '/opportunities', label: 'Explore', icon: Compass },
-    { href: '/opportunities?direct=true', label: 'Direct', icon: Zap },
+    ...(user ? [{ href: '/opportunities?direct=true', label: 'Direct', icon: Zap }] : []),
     { href: '/post-opportunity', label: 'Post', icon: PlusCircle },
-    { href: '/dashboard', label: 'Track', icon: LayoutDashboard },
+    { href: user ? '/dashboard' : '/login', label: user ? 'Track' : 'Sign In', icon: user ? LayoutDashboard : LogIn },
   ]
 
   return (

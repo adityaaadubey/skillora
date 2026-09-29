@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { SkilloraLogo } from './SkilloraLogo'
@@ -28,6 +28,8 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 
+import { createClient } from '../lib/supabase/client'
+
 interface SidebarProps {
   isOpen: boolean
   onToggle: () => void
@@ -37,6 +39,16 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const pathname = usePathname()
   const [showPostModal, setShowPostModal] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => setUser(data.user))
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user ?? null)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
   const copyFounderContact = () => {
     navigator.clipboard.writeText('adityaomprakashdubey@gmail.com | +919881867687')
@@ -46,8 +58,8 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   const primaryNav = [
     { href: '/opportunities', label: 'All Opportunities', icon: Compass, badge: 'Live' },
-    { href: '/opportunities?direct=true', label: '1-Click Direct Apply', icon: Zap, badge: 'Zero-Redirect' },
-    { href: '/dashboard', label: 'AI Smart Matcher', icon: Sparkles, badge: 'Deterministic' },
+    ...(user ? [{ href: '/opportunities?direct=true', label: '1-Click Direct Apply', icon: Zap, badge: 'Zero-Redirect' }] : []),
+    { href: user ? '/dashboard' : '/login', label: 'AI Smart Matcher', icon: Sparkles, badge: 'Deterministic' },
   ]
 
   const trackNav = [

@@ -126,8 +126,8 @@ export function BrandHeroShowcase() {
         <div
           style={{
             position: 'relative',
-            width: '240px',
-            height: '240px',
+            width: '280px',
+            height: '280px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -141,8 +141,8 @@ export function BrandHeroShowcase() {
           <img
             src="/logo-full.png"
             alt="Skillora Official Logo"
-            width={240}
-            height={240}
+            width={280}
+            height={280}
             style={{
               width: '100%',
               height: '100%',
