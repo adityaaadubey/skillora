@@ -42,13 +42,38 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      setUser(session?.user ?? null)
-    })
-    return () => subscription.unsubscribe()
-  }, [])
+    let isMounted = true
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/session')
+        const data = await res.json()
+        if (!isMounted) return
+        if (data?.authenticated && data?.user) {
+          setUser(data.user)
+          return
+        }
+      } catch {}
+      try {
+        const supabase = createClient()
+        const { data } = await supabase.auth.getUser()
+        if (isMounted) setUser(data?.user ?? null)
+      } catch {
+        if (isMounted) setUser(null)
+      }
+    }
+
+    checkAuth()
+
+    const handleAuth = () => checkAuth()
+    window.addEventListener('auth-change', handleAuth)
+    window.addEventListener('storage', handleAuth)
+
+    return () => {
+      isMounted = false
+      window.removeEventListener('auth-change', handleAuth)
+      window.removeEventListener('storage', handleAuth)
+    }
+  }, [pathname])
 
   const copyFounderContact = () => {
     navigator.clipboard.writeText('adityaomprakashdubey@gmail.com | +919881867687')

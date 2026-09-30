@@ -52,14 +52,39 @@ export function DirectApplyModal({
 
   useEffect(() => {
     if (!isOpen) return
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user)
-      if (data.user?.email && !email) {
-        setEmail(data.user.email)
+    let isMounted = true
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/session')
+        const data = await res.json()
+        if (!isMounted) return
+        if (data?.authenticated && data?.user) {
+          setUser(data.user)
+          if (data.user.email && !email) setEmail(data.user.email)
+          if (data.user.profile?.full_name && !fullName) setFullName(data.user.profile.full_name)
+          if (data.user.profile?.college && !college) setCollege(data.user.profile.college)
+          if (data.user.profile?.degree && !degree) setDegree(data.user.profile.degree)
+          setAuthChecked(true)
+          return
+        }
+      } catch {}
+      try {
+        const supabase = createClient()
+        const { data } = await supabase.auth.getUser()
+        if (isMounted) {
+          setUser(data?.user ?? null)
+          if (data?.user?.email && !email) setEmail(data.user.email)
+        }
+      } catch {
+        if (isMounted) setUser(null)
+      } finally {
+        if (isMounted) setAuthChecked(true)
       }
-      setAuthChecked(true)
-    })
+    }
+    checkAuth()
+    return () => {
+      isMounted = false
+    }
   }, [isOpen])
 
   if (!isOpen || !opportunity) return null

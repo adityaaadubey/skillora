@@ -91,6 +91,9 @@ function RegisterForm() {
       }
 
       setSuccess('Account created successfully! Redirecting...')
+      try {
+        window.dispatchEvent(new Event('auth-change'))
+      } catch {}
       setTimeout(() => {
         router.push('/opportunities')
         router.refresh()

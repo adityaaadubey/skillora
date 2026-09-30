@@ -37,41 +37,82 @@ export function Navbar() {
     setTheme(activeTheme)
 
     const supabase = createClient()
+    let isMounted = true
 
     async function loadUser() {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-      if (user) {
-        const { data } = await supabase
-          .from('profiles')
-          .select('full_name, role, avatar_url')
-          .eq('id', user.id)
-          .single()
-        setProfile(data)
+      // 1. Primary: Check server session endpoint (reliable with SSR HTTP-only cookies)
+      try {
+        const res = await fetch('/api/auth/session')
+        const sessionData = await res.json()
+        if (!isMounted) return
+        if (sessionData?.authenticated && sessionData?.user) {
+          setUser(sessionData.user)
+          setProfile(sessionData.user.profile || null)
+          setLoading(false)
+          return
+        }
+      } catch (err) {
+        console.error('Session sync error:', err)
       }
-      setLoading(false)
+
+      // 2. Fallback: Supabase browser client
+      try {
+        const { data: { user: browserUser } } = await supabase.auth.getUser()
+        if (!isMounted) return
+        setUser(browserUser)
+        if (browserUser) {
+          const { data } = await supabase
+            .from('profiles')
+            .select('full_name, role, avatar_url')
+            .eq('id', browserUser.id)
+            .single()
+          if (isMounted) setProfile(data)
+        } else {
+          setProfile(null)
+        }
+      } catch {
+        if (isMounted) {
+          setUser(null)
+          setProfile(null)
+        }
+      } finally {
+        if (isMounted) setLoading(false)
+      }
     }
 
     loadUser()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      setUser(session?.user ?? null)
+      if (!isMounted) return
       if (session?.user) {
+        setUser(session.user)
         supabase
           .from('profiles')
           .select('full_name, role, avatar_url')
           .eq('id', session.user.id)
           .single()
-          .then(({ data }) => setProfile(data))
+          .then(({ data }) => {
+            if (isMounted) setProfile(data)
+          })
       } else {
-        setProfile(null)
+        loadUser()
       }
     })
 
-    return () => {
-      subscription.unsubscribe()
+    const handleAuthEvent = () => {
+      loadUser()
     }
-  }, [])
+
+    window.addEventListener('auth-change', handleAuthEvent)
+    window.addEventListener('storage', handleAuthEvent)
+
+    return () => {
+      isMounted = false
+      subscription.unsubscribe()
+      window.removeEventListener('auth-change', handleAuthEvent)
+      window.removeEventListener('storage', handleAuthEvent)
+    }
+  }, [pathname])
 
   const toggleTheme = () => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark'
@@ -90,6 +131,9 @@ export function Navbar() {
     await supabase.auth.signOut()
     setUser(null)
     setProfile(null)
+    try {
+      window.dispatchEvent(new Event('auth-change'))
+    } catch {}
     router.push('/')
     router.refresh()
   }
@@ -335,13 +379,38 @@ export function MobileNav() {
   const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      setUser(session?.user ?? null)
-    })
-    return () => subscription.unsubscribe()
-  }, [])
+    let isMounted = true
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/session')
+        const data = await res.json()
+        if (!isMounted) return
+        if (data?.authenticated && data?.user) {
+          setUser(data.user)
+          return
+        }
+      } catch {}
+      try {
+        const supabase = createClient()
+        const { data } = await supabase.auth.getUser()
+        if (isMounted) setUser(data?.user ?? null)
+      } catch {
+        if (isMounted) setUser(null)
+      }
+    }
+
+    checkAuth()
+
+    const handleAuth = () => checkAuth()
+    window.addEventListener('auth-change', handleAuth)
+    window.addEventListener('storage', handleAuth)
+
+    return () => {
+      isMounted = false
+      window.removeEventListener('auth-change', handleAuth)
+      window.removeEventListener('storage', handleAuth)
+    }
+  }, [pathname])
 
   const links = [
     { href: '/', label: 'Home', icon: Compass },

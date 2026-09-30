@@ -37,10 +37,13 @@ function LoginForm() {
       }
 
       setSuccess('Signed in successfully! Redirecting...')
+      try {
+        window.dispatchEvent(new Event('auth-change'))
+      } catch {}
       setTimeout(() => {
         router.push(returnTo)
         router.refresh()
-      }, 500)
+      }, 400)
     } catch (err: any) {
       setError(err?.message || 'Login failed. Please verify your email and password.')
     } finally {
