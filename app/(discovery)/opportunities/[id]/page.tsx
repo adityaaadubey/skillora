@@ -4,6 +4,8 @@ import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { formatDeadline, getCategoryBadgeClass, formatCompensation, getSanitizedWorkingUrl } from '../../../../lib/utils'
 import { DirectApplyModal } from '../../../../components/DirectApplyModal'
+import { CalendarSyncButton } from '../../../../components/CalendarSyncButton'
+import { ResumeAtsScannerModal } from '../../../../components/ResumeAtsScannerModal'
 import {
   ArrowLeft,
   Bookmark,
@@ -20,6 +22,8 @@ import {
   Clock,
   Loader2,
   Zap,
+  BrainCircuit,
+  Users,
 } from 'lucide-react'
 
 export default function OpportunityDetailPage({
@@ -35,6 +39,8 @@ export default function OpportunityDetailPage({
   const [saved, setSaved] = useState(false)
   const [saving, setSaving] = useState(false)
   const [showDirectModal, setShowDirectModal] = useState(false)
+  const [showAtsModal, setShowAtsModal] = useState(false)
+  const [tailoredPitch, setTailoredPitch] = useState('')
 
   // Reminder modal state
   const [showReminderModal, setShowReminderModal] = useState(false)
@@ -417,6 +423,29 @@ export default function OpportunityDetailPage({
                 <span>Direct Apply on Skillora</span>
               </button>
 
+              {/* AI Resume & ATS Match Scanner */}
+              <button
+                onClick={() => setShowAtsModal(true)}
+                className="btn btn-secondary"
+                style={{
+                  width: '100%',
+                  padding: '0.65rem',
+                  fontSize: '0.875rem',
+                  marginBottom: '0.75rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(6, 182, 212, 0.12))',
+                  border: '1px solid rgba(99, 102, 241, 0.4)',
+                  color: 'var(--text-primary)',
+                  fontWeight: 600,
+                }}
+              >
+                <BrainCircuit size={16} color="var(--accent-indigo)" />
+                <span>AI Resume & ATS Scanner</span>
+              </button>
+
               {/* Secondary Action: Verified Official Link */}
               <a
                 href={safeUrl}
@@ -449,15 +478,41 @@ export default function OpportunityDetailPage({
                   <span>{saved ? 'Saved' : 'Save'}</span>
                 </button>
 
-                <button
-                  onClick={() => setShowReminderModal(true)}
-                  className="btn btn-secondary"
-                  style={{ padding: '0.625rem', fontSize: '0.875rem' }}
-                >
-                  <Bell size={16} color={reminderSaved ? 'var(--accent-amber)' : undefined} />
-                  <span>{reminderSaved ? 'Reminded' : 'Remind'}</span>
-                </button>
+                <CalendarSyncButton
+                  event={{
+                    title: opp.title,
+                    description: opp.description,
+                    deadline: opp.deadline,
+                    location: opp.mode === 'remote' ? 'Remote' : opp.location,
+                    url: safeUrl,
+                  }}
+                />
               </div>
+
+              {opp.category === 'hackathon' && (
+                <Link
+                  href="/squads"
+                  className="btn btn-secondary"
+                  style={{
+                    width: '100%',
+                    padding: '0.625rem',
+                    fontSize: '0.8125rem',
+                    marginBottom: '1rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.375rem',
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    color: '#fcd34d',
+                    textDecoration: 'none',
+                    fontWeight: 600,
+                  }}
+                >
+                  <Users size={15} />
+                  <span>Find Hackathon Squad for This</span>
+                </Link>
+              )}
 
               <button
                 onClick={() => setShowReportModal(true)}
@@ -541,6 +596,18 @@ export default function OpportunityDetailPage({
         opportunity={opp}
         isOpen={showDirectModal}
         onClose={() => setShowDirectModal(false)}
+        initialPitch={tailoredPitch}
+      />
+
+      {/* AI Resume & ATS Match Scanner Modal */}
+      <ResumeAtsScannerModal
+        isOpen={showAtsModal}
+        onClose={() => setShowAtsModal(false)}
+        opportunity={opp}
+        onApplyWithPitch={(pitch) => {
+          setTailoredPitch(pitch)
+          setShowDirectModal(true)
+        }}
       />
 
       {/* Reminder Modal */}

@@ -26,6 +26,7 @@ interface DirectApplyModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess?: () => void
+  initialPitch?: string
 }
 
 export function DirectApplyModal({
@@ -33,6 +34,7 @@ export function DirectApplyModal({
   isOpen,
   onClose,
   onSuccess,
+  initialPitch,
 }: DirectApplyModalProps) {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -42,13 +44,19 @@ export function DirectApplyModal({
   const [yearOfStudy, setYearOfStudy] = useState('3rd Year')
   const [portfolioUrl, setPortfolioUrl] = useState('')
   const [resumeUrl, setResumeUrl] = useState('')
-  const [pitch, setPitch] = useState('')
+  const [pitch, setPitch] = useState(initialPitch || '')
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [applicationId, setApplicationId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState<any>(null)
   const [authChecked, setAuthChecked] = useState(false)
+
+  useEffect(() => {
+    if (initialPitch) {
+      setPitch(initialPitch)
+    }
+  }, [initialPitch])
 
   useEffect(() => {
     if (!isOpen) return

@@ -26,6 +26,7 @@ import {
   ShieldCheck,
   Flame,
   CheckCircle2,
+  Users,
 } from 'lucide-react'
 
 import { createClient } from '../lib/supabase/client'
@@ -83,6 +84,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   const primaryNav = [
     { href: '/opportunities', label: 'All Opportunities', icon: Compass, badge: 'Live' },
+    { href: '/squads', label: 'Skillora Squads', icon: Users, badge: 'Community' },
     ...(user ? [{ href: '/opportunities?direct=true', label: '1-Click Direct Apply', icon: Zap, badge: 'Zero-Redirect' }] : []),
     { href: user ? '/dashboard' : '/login', label: 'AI Smart Matcher', icon: Sparkles, badge: 'Deterministic' },
   ]

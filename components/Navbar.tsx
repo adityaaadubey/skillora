@@ -20,6 +20,7 @@ import {
   Menu,
   PlusCircle,
   Zap,
+  Users,
 } from 'lucide-react'
 
 export function Navbar() {
@@ -140,6 +141,7 @@ export function Navbar() {
 
   const navLinks = [
     { href: '/opportunities', label: 'Explore', icon: Compass },
+    { href: '/squads', label: 'Squads', icon: Users },
     { href: '/opportunities?direct=true', label: 'Direct Apply', icon: Zap, authOnly: true },
     { href: '/saved', label: 'Saved', icon: Bookmark, authOnly: true },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, authOnly: true },
@@ -415,8 +417,8 @@ export function MobileNav() {
   const links = [
     { href: '/', label: 'Home', icon: Compass },
     { href: '/opportunities', label: 'Explore', icon: Compass },
+    { href: '/squads', label: 'Squads', icon: Users },
     ...(user ? [{ href: '/opportunities?direct=true', label: 'Direct', icon: Zap }] : []),
-    { href: '/post-opportunity', label: 'Post', icon: PlusCircle },
     { href: user ? '/dashboard' : '/login', label: user ? 'Track' : 'Sign In', icon: user ? LayoutDashboard : LogIn },
   ]
 

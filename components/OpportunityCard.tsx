@@ -5,7 +5,8 @@ import { useState } from 'react'
 import { Opportunity } from '../lib/database.types'
 import { formatDeadline, getCategoryBadgeClass, formatCompensation, getSanitizedWorkingUrl } from '../lib/utils'
 import { DirectApplyModal } from './DirectApplyModal'
-import { Bookmark, Clock, MapPin, ExternalLink, CheckCircle, Sparkles, Zap } from 'lucide-react'
+import { CalendarSyncButton } from './CalendarSyncButton'
+import { Bookmark, Clock, MapPin, ExternalLink, CheckCircle, Sparkles, Zap, Flame } from 'lucide-react'
 
 interface OpportunityCardProps {
   opportunity: Opportunity
@@ -220,14 +221,14 @@ export function OpportunityCard({
               fontWeight: deadline.urgency === 'soon' ? 700 : 500,
             }}
           >
-            <Clock size={13} />
+            {deadline.urgency === 'soon' ? <Flame size={13} color="#f59e0b" /> : <Clock size={13} />}
             <span>{deadline.text}</span>
           </div>
         </div>
 
         {/* Skills & Action Buttons */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: 'auto' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', maxWidth: '55%' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', maxWidth: '50%' }}>
             {(opportunity.skills || []).slice(0, 2).map((s) => (
               <span
                 key={s}
@@ -250,6 +251,18 @@ export function OpportunityCard({
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+            {/* 1-Click Calendar Sync */}
+            <CalendarSyncButton
+              compact
+              event={{
+                title: opportunity.title,
+                description: opportunity.description,
+                deadline: opportunity.deadline,
+                location: opportunity.mode === 'remote' ? 'Remote' : opportunity.location,
+                url: safeUrl,
+              }}
+            />
+
             {/* 1-Click In-App Direct Apply */}
             <button
               onClick={() => setShowDirectModal(true)}
