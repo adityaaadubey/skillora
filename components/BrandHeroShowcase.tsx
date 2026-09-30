@@ -14,7 +14,7 @@ export function BrandHeroShowcase() {
         position: 'relative',
         maxWidth: '820px',
         margin: '0 auto 2.5rem',
-        padding: '2.5rem 1.5rem',
+        padding: 'clamp(1.5rem, 5vw, 2.5rem) clamp(1rem, 4vw, 1.5rem)',
         borderRadius: 'var(--radius-xl)',
         background: 'linear-gradient(180deg, rgba(30, 27, 75, 0.35) 0%, rgba(15, 23, 42, 0.5) 100%)',
         border: '1px solid rgba(99, 102, 241, 0.25)',
@@ -126,8 +126,8 @@ export function BrandHeroShowcase() {
         <div
           style={{
             position: 'relative',
-            width: '280px',
-            height: '280px',
+            width: 'min(280px, 72vw)',
+            height: 'min(280px, 72vw)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

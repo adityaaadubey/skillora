@@ -227,7 +227,7 @@ export function OpportunityCard({
         </div>
 
         {/* Skills & Action Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: 'auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: 'auto', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', maxWidth: '50%' }}>
             {(opportunity.skills || []).slice(0, 2).map((s) => (
               <span

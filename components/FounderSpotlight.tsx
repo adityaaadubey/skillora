@@ -32,7 +32,7 @@ export function FounderSpotlight() {
         <div
           className="glass-panel"
           style={{
-            padding: '3rem 2.5rem',
+            padding: 'clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2.5rem)',
             borderRadius: 'var(--radius-xl)',
             border: '1px solid rgba(99, 102, 241, 0.3)',
             background: 'var(--bg-glass)',
@@ -59,7 +59,7 @@ export function FounderSpotlight() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
               gap: '2.5rem',
               alignItems: 'center',
             }}
@@ -163,6 +163,8 @@ export function FounderSpotlight() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.75rem',
                   padding: '0.875rem 1rem',
                   borderRadius: 'var(--radius-md)',
                   background: 'var(--bg-glass)',
@@ -208,6 +210,8 @@ export function FounderSpotlight() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.75rem',
                   padding: '0.875rem 1rem',
                   borderRadius: 'var(--radius-md)',
                   background: 'var(--bg-glass)',

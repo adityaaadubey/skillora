@@ -9,6 +9,7 @@ import { Sidebar } from './Sidebar'
 import { PostOpportunityModal } from './PostOpportunityModal'
 import {
   Compass,
+  Home,
   Bookmark,
   LayoutDashboard,
   Shield,
@@ -236,8 +237,37 @@ export function Navbar() {
             )}
           </nav>
 
-          {/* Right Actions: Post Opportunity, Theme, Auth */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {/* Right Actions: Drawer Toggle, Post Opportunity, Theme, Auth */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+            {/* Mobile Menu Drawer Toggle (Visible below 820px) */}
+            <button
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open Navigation Drawer"
+              className="mobile-drawer-btn"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '36px',
+                height: '36px',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                transition: 'all var(--transition-fast)',
+              }}
+            >
+              <Menu size={18} />
+            </button>
+            <style jsx>{`
+              @media (min-width: 820px) {
+                .mobile-drawer-btn {
+                  display: none !important;
+                }
+              }
+            `}</style>
+
             {/* Post Opportunity Button */}
             <button
               onClick={() => setPostModalOpen(true)}
@@ -415,7 +445,7 @@ export function MobileNav() {
   }, [pathname])
 
   const links = [
-    { href: '/', label: 'Home', icon: Compass },
+    { href: '/', label: 'Home', icon: Home },
     { href: '/opportunities', label: 'Explore', icon: Compass },
     { href: '/squads', label: 'Squads', icon: Users },
     ...(user ? [{ href: '/opportunities?direct=true', label: 'Direct', icon: Zap }] : []),

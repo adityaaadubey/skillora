@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Navbar, MobileNav } from '../components/Navbar'
 import { Footer } from '../components/Footer'
+import { FairyCursorBeam } from '../components/FairyCursorBeam'
 
 export const metadata: Metadata = {
   title: 'Skillora | High-Trust Student Opportunity Intelligence',
@@ -45,6 +46,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <FairyCursorBeam />
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>
