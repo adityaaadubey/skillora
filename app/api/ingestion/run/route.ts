@@ -14,10 +14,11 @@ export async function POST(request: NextRequest) {
 
     // Authorization: either CRON_SECRET or authenticated admin
     const authHeader = request.headers.get('authorization')
-    const cronSecret = process.env.CRON_SECRET || 'skillora_dev_cron_secret_secure_token_2026'
+    const isProd = process.env.NODE_ENV === 'production'
+    const cronSecret = process.env.CRON_SECRET || (!isProd ? 'skillora_dev_cron_secret_secure_token_2026' : null)
     let isAuthorized = false
 
-    if (authHeader && authHeader === `Bearer ${cronSecret}`) {
+    if (authHeader && cronSecret && authHeader === `Bearer ${cronSecret}`) {
       isAuthorized = true
     } else {
       const { data: { user } } = await supabase.auth.getUser()

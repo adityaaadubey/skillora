@@ -21,7 +21,9 @@ import {
   Trophy,
   ChevronRight,
   Plus,
+  FileText,
 } from 'lucide-react'
+import { ApplicationSlipModal } from '../../../components/ApplicationSlipModal'
 
 export default function SavedPipelinePage() {
   const [items, setItems] = useState<any[]>([])
@@ -30,6 +32,7 @@ export default function SavedPipelinePage() {
   const [activeTab, setActiveTab] = useState('all')
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null)
   const [noteContent, setNoteContent] = useState('')
+  const [selectedSlip, setSelectedSlip] = useState<any>(null)
 
   const KANBAN_COLUMNS = [
     { key: 'saved', label: 'Saved / Shortlisted', icon: '📌', color: '#6366f1' },
@@ -448,6 +451,40 @@ export default function SavedPipelinePage() {
                               }}
                             />
 
+                            {/* View & Download Official Application Slip */}
+                            {item.status === 'applied' && (
+                              <button
+                                onClick={() => {
+                                  let noteData: any = {}
+                                  try { noteData = JSON.parse(item.note) } catch {}
+                                  setSelectedSlip({
+                                    applicationId: noteData.applicationId || `SKL-2026-${item.id.slice(0, 6).toUpperCase()}`,
+                                    applicantName: noteData.applicantName || 'Applicant',
+                                    applicantEmail: noteData.applicantEmail || 'applicant@skillora.internal',
+                                    applicantPhone: noteData.applicantPhone || '+91 98818 67687',
+                                    college: noteData.college || 'Engineering Institution',
+                                    degree: noteData.degree || 'B.Tech / STEM',
+                                    yearOfStudy: noteData.yearOfStudy || '3rd Year',
+                                    portfolioUrl: noteData.portfolioUrl,
+                                    appliedAt: noteData.appliedAt || item.updated_at || new Date().toISOString(),
+                                    opportunity: opp,
+                                  })
+                                }}
+                                className="btn btn-secondary"
+                                style={{
+                                  padding: '0.3rem 0.55rem',
+                                  fontSize: '0.72rem',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.25rem',
+                                }}
+                                title="View & Download Official Application Slip (PDF)"
+                              >
+                                <FileText size={12} color="var(--accent-indigo)" />
+                                <span>Slip PDF</span>
+                              </button>
+                            )}
+
                             {nextCol && (
                               <button
                                 onClick={() => handleStatusChange(item.opportunity_id, nextCol.key)}
@@ -583,6 +620,13 @@ export default function SavedPipelinePage() {
           })}
         </div>
       )}
+
+      {/* Official Application & Registration Slip Modal */}
+      <ApplicationSlipModal
+        isOpen={Boolean(selectedSlip)}
+        onClose={() => setSelectedSlip(null)}
+        data={selectedSlip}
+      />
     </div>
   )
 }

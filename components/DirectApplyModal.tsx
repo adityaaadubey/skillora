@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { createClient } from '../lib/supabase/client'
 import { Opportunity } from '../lib/database.types'
+import { ApplicationSlipModal } from './ApplicationSlipModal'
 import {
   X,
   Sparkles,
@@ -48,6 +49,7 @@ export function DirectApplyModal({
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [applicationId, setApplicationId] = useState<string | null>(null)
+  const [showSlipModal, setShowSlipModal] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState<any>(null)
   const [authChecked, setAuthChecked] = useState(false)
@@ -276,8 +278,22 @@ export function DirectApplyModal({
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
-              <button onClick={handleReset} className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => setShowSlipModal(true)}
+                className="btn btn-primary"
+                style={{ padding: '0.65rem 1.25rem', gap: '0.4rem', fontSize: '0.875rem' }}
+              >
+                <FileText size={16} />
+                <span>View & Download Official Slip (PDF)</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="btn btn-secondary"
+                style={{ padding: '0.65rem 1.25rem', fontSize: '0.875rem' }}
+              >
                 Done
               </button>
             </div>
@@ -603,6 +619,26 @@ export function DirectApplyModal({
           </div>
         )}
       </div>
+
+      {/* Official Skillora Proof of Registration & Application Slip Modal */}
+      <ApplicationSlipModal
+        isOpen={showSlipModal}
+        onClose={() => setShowSlipModal(false)}
+        data={opportunity && applicationId ? {
+          applicationId,
+          applicantName: fullName || 'Applicant',
+          applicantEmail: email,
+          applicantPhone: phone,
+          college: college || 'Student Institution',
+          degree: degree || 'Engineering / STEM',
+          yearOfStudy,
+          portfolioUrl,
+          resumeUrl,
+          pitch,
+          appliedAt: new Date().toISOString(),
+          opportunity,
+        } : null}
+      />
     </div>
   )
 }
