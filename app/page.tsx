@@ -4,6 +4,7 @@ import { OpportunityCard } from '../components/OpportunityCard'
 import { BrandHeroShowcase } from '../components/BrandHeroShowcase'
 import { SkillMatchSimulator } from '../components/SkillMatchSimulator'
 import { FounderSpotlight } from '../components/FounderSpotlight'
+import { FloatingStudyStickers } from '../components/FloatingStudyStickers'
 import {
   Sparkles,
   ShieldCheck,
@@ -102,6 +103,9 @@ export default async function HomePage() {
           borderBottom: '1px solid var(--border-subtle)',
         }}
       >
+        {/* Aesthetic Floating Study Stickers on Left & Right Gutters */}
+        <FloatingStudyStickers />
+
         <div className="container" style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: '960px' }}>
           {/* Live Ingestion Telemetry Pill */}
           <div
