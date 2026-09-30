@@ -41,12 +41,37 @@ export function Footer() {
             <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '1rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
               Explore Tracks
             </h3>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.625rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-              <li><Link href="/opportunities?category=internship" style={{ transition: 'color 0.2s', textDecoration: 'none', color: 'inherit' }}>Engineering Internships</Link></li>
-              <li><Link href="/opportunities?category=hackathon" style={{ transition: 'color 0.2s', textDecoration: 'none', color: 'inherit' }}>Global Hackathons</Link></li>
-              <li><Link href="/opportunities?category=fellowship" style={{ transition: 'color 0.2s', textDecoration: 'none', color: 'inherit' }}>Fellowships & Grants</Link></li>
-              <li><Link href="/opportunities?category=competition" style={{ transition: 'color 0.2s', textDecoration: 'none', color: 'inherit' }}>Coding Competitions</Link></li>
-              <li><Link href="/opportunities?direct=true" style={{ transition: 'color 0.2s', textDecoration: 'none', color: 'var(--accent-indigo)', fontWeight: 600 }}>⚡ 1-Click Direct Apply</Link></li>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.625rem', fontSize: '0.875rem' }}>
+              <li>
+                <Link href="/opportunities?category=internship" style={{ transition: 'opacity 0.2s', textDecoration: 'none', color: 'var(--accent-indigo)', fontWeight: 500 }}>
+                  Engineering Internships
+                </Link>
+              </li>
+              <li>
+                <Link href="/opportunities?category=hackathon" style={{ transition: 'opacity 0.2s', textDecoration: 'none', color: 'var(--accent-indigo)', fontWeight: 500 }}>
+                  Global Hackathons
+                </Link>
+              </li>
+              <li>
+                <Link href="/opportunities?category=fellowship" style={{ transition: 'opacity 0.2s', textDecoration: 'none', color: 'var(--accent-indigo)', fontWeight: 500 }}>
+                  Fellowships & Grants
+                </Link>
+              </li>
+              <li>
+                <Link href="/opportunities?category=competition" style={{ transition: 'opacity 0.2s', textDecoration: 'none', color: 'var(--accent-indigo)', fontWeight: 500 }}>
+                  Coding Competitions
+                </Link>
+              </li>
+              <li>
+                <Link href="/squads" style={{ transition: 'opacity 0.2s', textDecoration: 'none', color: 'var(--accent-indigo)', fontWeight: 600 }}>
+                  🤝 Skillora Squads Hub
+                </Link>
+              </li>
+              <li>
+                <Link href="/opportunities?direct=true" style={{ transition: 'opacity 0.2s', textDecoration: 'none', color: 'var(--accent-indigo)', fontWeight: 600 }}>
+                  ⚡ 1-Click Direct Apply
+                </Link>
+              </li>
             </ul>
           </div>
 
