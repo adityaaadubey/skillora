@@ -98,9 +98,7 @@ Built specifically for university students, emerging engineers, and campus build
 Skillora was envisioned, designed, and architected by **Aditya Dubey**.
 
 - **Founder & Chief Architect**: Aditya Dubey
-- **Direct Email**: [adityaomprakashdubey@gmail.com](mailto:adityaomprakashdubey@gmail.com)
-- **Phone / WhatsApp**: [+91 98818 67687](tel:+919881867687)
-- **GitHub**: [github.com/adityaaadubey](https://github.com/adityaaadubey)
+- **Official Business Email**: [skillora.aditya@gmail.com](mailto:skillora.aditya@gmail.com)
 
 > *"Skillora is built to kill the broken, spam-infested campus placement cycle. We connect talent directly with real opportunities through open, deterministic, explainable matching."*
 
@@ -186,5 +184,5 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ---
 
 <div align="center">
-  <p>Built with ❤️ by <a href="https://github.com/adityaaadubey">Aditya Dubey</a> for university students worldwide.</p>
+  <p>Built with ❤️ by Aditya Dubey for university students worldwide.</p>
 </div>

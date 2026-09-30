@@ -90,7 +90,7 @@ const DEFAULT_SQUADS: Squad[] = [
     maxMembers: 3,
     description: 'Contributing a SIMD-accelerated similarity search crate for high-resolution DICOM CT scans to mainstream open-source health registries.',
     contactType: 'linkedin',
-    contactValue: 'https://linkedin.com/in/adityaomprakashdubey',
+    contactValue: 'https://linkedin.com/in/tanmaysaxena-dev',
     isVerified: false,
     createdAt: '3 days ago',
   },

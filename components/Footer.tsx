@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { SkilloraLogo } from './SkilloraLogo'
-import { ShieldCheck, Database, Lock, Mail, Phone, Heart, Zap, PlusCircle } from 'lucide-react'
+import { ShieldCheck, Database, Lock, Mail, Heart, Zap, PlusCircle } from 'lucide-react'
 
 export function Footer() {
   return (
@@ -108,18 +108,11 @@ export function Footer() {
             <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Aditya Dubey</div>
               <a
-                href="mailto:adityaomprakashdubey@gmail.com"
+                href="mailto:skillora.aditya@gmail.com"
                 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'inherit', textDecoration: 'none' }}
               >
                 <Mail size={14} color="var(--accent-indigo)" />
-                <span>adityaomprakashdubey@gmail.com</span>
-              </a>
-              <a
-                href="tel:+919881867687"
-                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'inherit', textDecoration: 'none' }}
-              >
-                <Phone size={14} color="#10b981" />
-                <span>+91 98818 67687</span>
+                <span>skillora.aditya@gmail.com</span>
               </a>
               <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 Built for all ambitious students, developers, and organizers worldwide.

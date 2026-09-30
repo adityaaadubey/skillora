@@ -14,6 +14,7 @@ interface Particle {
   isStar: boolean
   rotation: number
   rotSpeed: number
+  colorType: number // 0: primary (jet black / pure white), 1: enchanted indigo/twilight, 2: slate/shimmer
 }
 
 export function FairyCursorBeam() {
@@ -34,6 +35,15 @@ export function FairyCursorBeam() {
     let width = (canvas.width = window.innerWidth)
     let height = (canvas.height = window.innerHeight)
 
+    let isLight = document.documentElement.getAttribute('data-theme') === 'light'
+    const themeObserver = new MutationObserver(() => {
+      isLight = document.documentElement.getAttribute('data-theme') === 'light'
+    })
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    })
+
     const particles: Particle[] = []
     let mouse = { x: -500, y: -500, isMoving: false }
     let smoothMouse = { x: -500, y: -500 }
@@ -52,29 +62,33 @@ export function FairyCursorBeam() {
       mouse.isMoving = true
       lastMoveTime = performance.now()
 
-      // Spawn 1-2 fairy dust sparkles on movement
-      const count = Math.random() > 0.4 ? 2 : 1
+      // Spawn 2-3 fairy dust sparkles on movement for a rich magical trail
+      const count = Math.random() > 0.3 ? 3 : 2
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2
-        const speed = Math.random() * 0.8 + 0.2
+        const speed = Math.random() * 0.9 + 0.2
+        const colorRand = Math.random()
+        const colorType = colorRand > 0.75 ? 1 : colorRand > 0.45 ? 2 : 0
+
         particles.push({
-          x: mouse.x + (Math.random() - 0.5) * 8,
-          y: mouse.y + (Math.random() - 0.5) * 8,
+          x: mouse.x + (Math.random() - 0.5) * 10,
+          y: mouse.y + (Math.random() - 0.5) * 10,
           vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 0.3, // slight upward float
-          size: Math.random() * 2 + 1,
-          alpha: Math.random() * 0.4 + 0.6,
+          vy: Math.sin(angle) * speed - 0.35, // slight upward fairy float
+          size: Math.random() * 2.2 + 1.2,
+          alpha: Math.random() * 0.35 + 0.65,
           life: 0,
-          maxLife: Math.floor(Math.random() * 25 + 25),
-          isStar: Math.random() > 0.6,
-          rotation: Math.random() * Math.PI,
-          rotSpeed: (Math.random() - 0.5) * 0.1,
+          maxLife: Math.floor(Math.random() * 28 + 26),
+          isStar: Math.random() > 0.45, // 55% 4-pointed fairy tale stars
+          rotation: Math.random() * Math.PI * 2,
+          rotSpeed: (Math.random() - 0.5) * 0.12,
+          colorType,
         })
       }
 
-      // Limit particle pool to 60 for performance
-      if (particles.length > 60) {
-        particles.splice(0, particles.length - 60)
+      // Limit particle pool to 75 for performance
+      if (particles.length > 75) {
+        particles.splice(0, particles.length - 75)
       }
     }
     window.addEventListener('mousemove', handleMouseMove, { passive: true })
@@ -85,7 +99,7 @@ export function FairyCursorBeam() {
     }
     document.addEventListener('mouseleave', handleMouseLeave)
 
-    // Helper to draw a tiny 4-pointed fairy tale sparkle star
+    // Helper to draw a crisp 4-pointed fairy tale sparkle star
     const drawSparkle = (
       ctx: CanvasRenderingContext2D,
       cx: number,
@@ -94,13 +108,14 @@ export function FairyCursorBeam() {
       outerRadius: number,
       innerRadius: number,
       rot: number,
-      alpha: number
+      alpha: number,
+      colorType: number
     ) => {
       ctx.save()
       ctx.beginPath()
       ctx.translate(cx, cy)
       ctx.rotate(rot)
-      let step = Math.PI / spikes
+      const step = Math.PI / spikes
       ctx.moveTo(0, -outerRadius)
       for (let i = 0; i < spikes; i++) {
         ctx.rotate(step)
@@ -109,9 +124,35 @@ export function FairyCursorBeam() {
         ctx.lineTo(0, -outerRadius)
       }
       ctx.closePath()
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`
-      ctx.shadowColor = 'rgba(224, 242, 254, 0.8)'
-      ctx.shadowBlur = 6
+
+      if (isLight) {
+        // Magical Black Fairy Tale Sparkles (for light theme)
+        if (colorType === 1) {
+          // Midnight violet-black
+          ctx.fillStyle = `rgba(30, 27, 75, ${alpha})`
+          ctx.shadowColor = `rgba(79, 70, 229, ${alpha * 0.6})`
+        } else if (colorType === 2) {
+          // Deep obsidian slate
+          ctx.fillStyle = `rgba(30, 41, 59, ${alpha})`
+          ctx.shadowColor = `rgba(15, 23, 42, ${alpha * 0.5})`
+        } else {
+          // Jet black fairy star
+          ctx.fillStyle = `rgba(10, 15, 28, ${alpha})`
+          ctx.shadowColor = `rgba(0, 0, 0, ${alpha * 0.65})`
+        }
+        ctx.shadowBlur = 5
+      } else {
+        // Luminous Ethereal Sparkles (for dark theme)
+        if (colorType === 1) {
+          ctx.fillStyle = `rgba(224, 231, 255, ${alpha})`
+          ctx.shadowColor = 'rgba(129, 140, 248, 0.9)'
+        } else {
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`
+          ctx.shadowColor = 'rgba(224, 242, 254, 0.85)'
+        }
+        ctx.shadowBlur = 6
+      }
+
       ctx.fill()
       ctx.restore()
     }
@@ -119,48 +160,85 @@ export function FairyCursorBeam() {
     const render = () => {
       ctx.clearRect(0, 0, width, height)
 
-      // Smooth cursor lerp for dull ambient light beam
+      // Smooth cursor lerp for ambient light / dark beam
       smoothMouse.x += (mouse.x - smoothMouse.x) * 0.15
       smoothMouse.y += (mouse.y - smoothMouse.y) * 0.15
 
-      // 1. Draw dull, aesthetic ambient light beam spotlight
+      // 1. Draw ambient light beam / dark fairy spotlight
       if (smoothMouse.x > 0 && smoothMouse.y > 0) {
-        // Outer soft dull halo (faint ethereal ambient light)
-        const outerGlow = ctx.createRadialGradient(
-          smoothMouse.x,
-          smoothMouse.y,
-          0,
-          smoothMouse.x,
-          smoothMouse.y,
-          160
-        )
-        outerGlow.addColorStop(0, 'rgba(255, 255, 255, 0.055)')
-        outerGlow.addColorStop(0.3, 'rgba(129, 140, 248, 0.035)')
-        outerGlow.addColorStop(0.7, 'rgba(6, 182, 212, 0.015)')
-        outerGlow.addColorStop(1, 'rgba(0, 0, 0, 0)')
+        if (isLight) {
+          // Light Mode: Ethereal Black / Dusk fairy beam spotlight
+          const outerGlow = ctx.createRadialGradient(
+            smoothMouse.x,
+            smoothMouse.y,
+            0,
+            smoothMouse.x,
+            smoothMouse.y,
+            150
+          )
+          outerGlow.addColorStop(0, 'rgba(15, 23, 42, 0.055)')
+          outerGlow.addColorStop(0.35, 'rgba(99, 102, 241, 0.035)')
+          outerGlow.addColorStop(0.7, 'rgba(30, 41, 59, 0.012)')
+          outerGlow.addColorStop(1, 'rgba(0, 0, 0, 0)')
 
-        ctx.fillStyle = outerGlow
-        ctx.beginPath()
-        ctx.arc(smoothMouse.x, smoothMouse.y, 160, 0, Math.PI * 2)
-        ctx.fill()
+          ctx.fillStyle = outerGlow
+          ctx.beginPath()
+          ctx.arc(smoothMouse.x, smoothMouse.y, 150, 0, Math.PI * 2)
+          ctx.fill()
 
-        // Inner soft white beam center
-        const innerGlow = ctx.createRadialGradient(
-          smoothMouse.x,
-          smoothMouse.y,
-          0,
-          smoothMouse.x,
-          smoothMouse.y,
-          28
-        )
-        innerGlow.addColorStop(0, 'rgba(255, 255, 255, 0.16)')
-        innerGlow.addColorStop(0.6, 'rgba(224, 242, 254, 0.06)')
-        innerGlow.addColorStop(1, 'rgba(255, 255, 255, 0)')
+          const innerGlow = ctx.createRadialGradient(
+            smoothMouse.x,
+            smoothMouse.y,
+            0,
+            smoothMouse.x,
+            smoothMouse.y,
+            26
+          )
+          innerGlow.addColorStop(0, 'rgba(15, 23, 42, 0.11)')
+          innerGlow.addColorStop(0.6, 'rgba(30, 27, 75, 0.04)')
+          innerGlow.addColorStop(1, 'rgba(15, 23, 42, 0)')
 
-        ctx.fillStyle = innerGlow
-        ctx.beginPath()
-        ctx.arc(smoothMouse.x, smoothMouse.y, 28, 0, Math.PI * 2)
-        ctx.fill()
+          ctx.fillStyle = innerGlow
+          ctx.beginPath()
+          ctx.arc(smoothMouse.x, smoothMouse.y, 26, 0, Math.PI * 2)
+          ctx.fill()
+        } else {
+          // Dark Mode: Luminous celestial beam spotlight
+          const outerGlow = ctx.createRadialGradient(
+            smoothMouse.x,
+            smoothMouse.y,
+            0,
+            smoothMouse.x,
+            smoothMouse.y,
+            160
+          )
+          outerGlow.addColorStop(0, 'rgba(255, 255, 255, 0.055)')
+          outerGlow.addColorStop(0.3, 'rgba(129, 140, 248, 0.035)')
+          outerGlow.addColorStop(0.7, 'rgba(6, 182, 212, 0.015)')
+          outerGlow.addColorStop(1, 'rgba(0, 0, 0, 0)')
+
+          ctx.fillStyle = outerGlow
+          ctx.beginPath()
+          ctx.arc(smoothMouse.x, smoothMouse.y, 160, 0, Math.PI * 2)
+          ctx.fill()
+
+          const innerGlow = ctx.createRadialGradient(
+            smoothMouse.x,
+            smoothMouse.y,
+            0,
+            smoothMouse.x,
+            smoothMouse.y,
+            28
+          )
+          innerGlow.addColorStop(0, 'rgba(255, 255, 255, 0.16)')
+          innerGlow.addColorStop(0.6, 'rgba(224, 242, 254, 0.06)')
+          innerGlow.addColorStop(1, 'rgba(255, 255, 255, 0)')
+
+          ctx.fillStyle = innerGlow
+          ctx.beginPath()
+          ctx.arc(smoothMouse.x, smoothMouse.y, 28, 0, Math.PI * 2)
+          ctx.fill()
+        }
       }
 
       // 2. Draw & update fairy tale sparkles
@@ -182,15 +260,43 @@ export function FairyCursorBeam() {
         }
 
         if (p.isStar) {
-          drawSparkle(ctx, p.x, p.y, 4, p.size * 1.8, p.size * 0.4, p.rotation, currentAlpha)
+          drawSparkle(
+            ctx,
+            p.x,
+            p.y,
+            4,
+            p.size * 2.0,
+            p.size * 0.42,
+            p.rotation,
+            currentAlpha,
+            p.colorType
+          )
         } else {
-          // Soft circular fairy dust speck with subtle starlight glow
+          // Soft circular fairy dust speck with starlight aura
           ctx.save()
           ctx.beginPath()
           ctx.arc(p.x, p.y, p.size * (1 - progress * 0.3), 0, Math.PI * 2)
-          ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha})`
-          ctx.shadowColor = 'rgba(199, 210, 254, 0.6)'
-          ctx.shadowBlur = 4
+
+          if (isLight) {
+            // Black fairy dust on white screen
+            if (p.colorType === 1) {
+              ctx.fillStyle = `rgba(49, 46, 129, ${currentAlpha})`
+              ctx.shadowColor = 'rgba(79, 70, 229, 0.5)'
+            } else if (p.colorType === 2) {
+              ctx.fillStyle = `rgba(51, 65, 85, ${currentAlpha})`
+              ctx.shadowColor = 'rgba(15, 23, 42, 0.4)'
+            } else {
+              ctx.fillStyle = `rgba(15, 23, 42, ${currentAlpha})`
+              ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
+            }
+            ctx.shadowBlur = 4
+          } else {
+            // White fairy dust on dark screen
+            ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha})`
+            ctx.shadowColor = 'rgba(199, 210, 254, 0.6)'
+            ctx.shadowBlur = 4
+          }
+
           ctx.fill()
           ctx.restore()
         }
@@ -206,6 +312,7 @@ export function FairyCursorBeam() {
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseleave', handleMouseLeave)
+      themeObserver.disconnect()
     }
   }, [])
 
@@ -224,3 +331,4 @@ export function FairyCursorBeam() {
     />
   )
 }
+

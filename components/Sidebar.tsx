@@ -18,7 +18,7 @@ import {
   LayoutDashboard,
   User,
   Mail,
-  Phone,
+  Copy,
   Radio,
   ChevronRight,
   Menu,
@@ -77,7 +77,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   }, [pathname])
 
   const copyFounderContact = () => {
-    navigator.clipboard.writeText('adityaomprakashdubey@gmail.com | +919881867687')
+    navigator.clipboard.writeText('skillora.aditya@gmail.com')
     setCopied(true)
     setTimeout(() => setCopied(false), 2500)
   }
@@ -386,32 +386,24 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
             Empowering every student with transparent, spam-free global opportunity matching.
           </div>
 
-          <div style={{ display: 'flex', gap: '0.375rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
             <a
-              href="mailto:adityaomprakashdubey@gmail.com"
+              href="mailto:skillora.aditya@gmail.com"
               className="btn btn-secondary"
-              style={{ flex: 1, padding: '0.35rem 0.5rem', fontSize: '0.72rem', justifyContent: 'center' }}
-              title="adityaomprakashdubey@gmail.com"
+              style={{ flex: 1, padding: '0.4rem 0.6rem', fontSize: '0.75rem', justifyContent: 'center', gap: '0.35rem' }}
+              title="skillora.aditya@gmail.com"
             >
-              <Mail size={12} />
+              <Mail size={13} />
               <span>Email</span>
-            </a>
-            <a
-              href="tel:+919881867687"
-              className="btn btn-secondary"
-              style={{ flex: 1, padding: '0.35rem 0.5rem', fontSize: '0.72rem', justifyContent: 'center' }}
-              title="+919881867687"
-            >
-              <Phone size={12} />
-              <span>Call</span>
             </a>
             <button
               onClick={copyFounderContact}
               className="btn btn-secondary"
-              style={{ padding: '0.35rem 0.5rem', fontSize: '0.72rem' }}
-              title="Copy details"
+              style={{ padding: '0.4rem 0.65rem', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+              title="Copy official email"
             >
-              {copied ? <CheckCircle2 size={12} color="#10b981" /> : 'Copy'}
+              {copied ? <CheckCircle2 size={13} color="#10b981" /> : <Copy size={13} />}
+              <span>{copied ? 'Copied' : 'Copy'}</span>
             </button>
           </div>
         </div>

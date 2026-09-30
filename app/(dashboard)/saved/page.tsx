@@ -461,7 +461,7 @@ export default function SavedPipelinePage() {
                                     applicationId: noteData.applicationId || `SKL-2026-${item.id.slice(0, 6).toUpperCase()}`,
                                     applicantName: noteData.applicantName || 'Applicant',
                                     applicantEmail: noteData.applicantEmail || 'applicant@skillora.internal',
-                                    applicantPhone: noteData.applicantPhone || '+91 98818 67687',
+                                    applicantPhone: noteData.applicantPhone || '+91 98765 43210',
                                     college: noteData.college || 'Engineering Institution',
                                     degree: noteData.degree || 'B.Tech / STEM',
                                     yearOfStudy: noteData.yearOfStudy || '3rd Year',

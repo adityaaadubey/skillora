@@ -134,6 +134,9 @@ export function DirectApplyModal({
 
       setApplicationId(json.applicationId || `SKL-APP-${Math.floor(100000 + Math.random() * 900000)}`)
       setSubmitted(true)
+      try {
+        window.dispatchEvent(new Event('points-awarded'))
+      } catch {}
       onSuccess?.()
     } catch (err: any) {
       setError(err?.message || 'Something went wrong. Please try again.')
@@ -228,18 +231,20 @@ export function DirectApplyModal({
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.375rem',
-                padding: '0.25rem 0.75rem',
+                gap: '0.5rem',
+                padding: '0.45rem 1.15rem',
                 borderRadius: 'var(--radius-full)',
-                background: 'rgba(99, 102, 241, 0.12)',
-                color: 'var(--accent-indigo)',
-                fontSize: '0.8125rem',
-                fontWeight: 600,
-                marginBottom: '0.75rem',
+                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(56, 189, 248, 0.15) 100%)',
+                border: '1px solid rgba(16, 185, 129, 0.4)',
+                color: '#34d399',
+                fontSize: '0.85rem',
+                fontWeight: 800,
+                marginBottom: '1rem',
+                boxShadow: '0 4px 15px rgba(16, 185, 129, 0.2)',
               }}
             >
-              <ShieldCheck size={14} />
-              <span>Skillora Direct In-App Submission</span>
+              <Sparkles size={16} color="#34d399" />
+              <span>+50 Career Points (XP) Added to Your Scoreboard! 🏆</span>
             </div>
 
             <h2 style={{ fontSize: '1.625rem', fontWeight: 800, marginBottom: '0.5rem' }}>
@@ -468,7 +473,7 @@ export function DirectApplyModal({
                     <input
                       type="tel"
                       required
-                      placeholder="+91 9881867687"
+                      placeholder="+91 98765 43210"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       className="input"

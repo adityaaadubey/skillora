@@ -58,6 +58,8 @@ export const updateProfileSchema = z.object({
   linkedin_url: z.string().trim().url('Invalid URL').or(z.literal('')).optional().nullable(),
   github_url: z.string().trim().url('Invalid URL').or(z.literal('')).optional().nullable(),
   portfolio_url: z.string().trim().url('Invalid URL').or(z.literal('')).optional().nullable(),
+  resume_reference: z.string().trim().url('Invalid URL').or(z.literal('')).optional().nullable(),
+  avatar_url: z.string().trim().optional().nullable(),
   preferred_categories: z.array(z.string()).default([]),
   preferred_locations: z.array(z.string()).default([]),
   preferred_modes: z.array(z.string()).default([]),

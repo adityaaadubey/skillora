@@ -61,7 +61,7 @@ export function ApplicationSlipModal({ isOpen, onClose, data }: ApplicationSlipM
     opportunity,
   } = data
 
-  const formattedDate = new Date(appliedAt).toLocaleDateString('en-US', {
+    const formattedDate = new Date(appliedAt).toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -74,124 +74,106 @@ export function ApplicationSlipModal({ isOpen, onClose, data }: ApplicationSlipM
     const printContent = printRef.current
     if (!printContent) return
 
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light'
+
     const printWindow = window.open('', '_blank', 'width=900,height=1100')
     if (!printWindow) {
       window.print()
       return
     }
 
+    const themeVariables = isLight
+      ? `
+        --bg-surface: #ffffff;
+        --bg-glass: #f8fafc;
+        --bg-glass-card: #ffffff;
+        --border-subtle: #e2e8f0;
+        --border-medium: #cbd5e1;
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --text-muted: #64748b;
+        --accent-indigo: #4f46e5;
+        --accent-cyan: #0284c7;
+        --accent-emerald: #059669;
+        --radius-md: 10px;
+        --radius-lg: 14px;
+        --radius-full: 9999px;
+      `
+      : `
+        --bg-surface: #0b0f19;
+        --bg-glass: #111827;
+        --bg-glass-card: #0e1526;
+        --border-subtle: rgba(255, 255, 255, 0.08);
+        --border-medium: rgba(255, 255, 255, 0.16);
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --accent-indigo: #818cf8;
+        --accent-cyan: #38bdf8;
+        --accent-emerald: #10b981;
+        --radius-md: 10px;
+        --radius-lg: 14px;
+        --radius-full: 9999px;
+      `
+
+    const bodyBg = isLight ? '#ffffff' : '#060913'
+    const bodyColor = isLight ? '#0f172a' : '#f8fafc'
+    const cardBg = isLight ? '#ffffff' : '#0b0f19'
+    const cardBorder = isLight ? '2px solid #4f46e5' : '2px solid rgba(99, 102, 241, 0.5)'
+
     printWindow.document.write(`
       <!DOCTYPE html>
-      <html>
+      <html data-theme="${isLight ? 'light' : 'dark'}">
         <head>
+          <meta charset="utf-8" />
           <title>Skillora_Application_Slip_${applicationId}</title>
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
-            * { box-sizing: border-box; margin: 0; padding: 0; }
+            :root {
+              ${themeVariables}
+            }
+            * {
+              box-sizing: border-box;
+              margin: 0;
+              padding: 0;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
             body {
-              font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-              color: #0f172a;
-              background: #ffffff;
-              padding: 2rem;
+              font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+              color: ${bodyColor};
+              background: ${bodyBg};
+              padding: 1.5rem;
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
             }
             @page {
               size: A4;
-              margin: 12mm;
+              margin: 8mm;
             }
-            .slip-card {
-              border: 2px solid #4f46e5;
-              border-radius: 16px;
-              padding: 2.25rem;
-              position: relative;
-              background: #ffffff;
-            }
-            .watermark {
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%) rotate(-30deg);
-              font-size: 5rem;
-              font-weight: 900;
-              color: rgba(79, 70, 229, 0.04);
-              pointer-events: none;
-              letter-spacing: 0.15em;
-              white-space: nowrap;
-            }
-            .header {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              border-bottom: 2px solid #e2e8f0;
-              padding-bottom: 1.5rem;
-              margin-bottom: 1.5rem;
-            }
-            .badge-verified {
-              background: #ecfdf5;
-              color: #047857;
-              border: 1px solid #10b981;
-              padding: 4px 10px;
-              border-radius: 9999px;
-              font-size: 11px;
-              font-weight: 700;
-              display: inline-block;
-            }
-            .grid-2 {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 1.25rem;
-              margin-bottom: 1.5rem;
-            }
-            .box {
-              background: #f8fafc;
-              border: 1px solid #e2e8f0;
-              border-radius: 10px;
-              padding: 1rem;
-            }
-            .box-title {
-              font-size: 11px;
-              font-weight: 700;
-              color: #64748b;
-              text-transform: uppercase;
-              letter-spacing: 0.05em;
-              margin-bottom: 0.5rem;
-            }
-            .box-content p {
-              font-size: 13px;
-              margin-bottom: 0.25rem;
-              color: #1e293b;
-            }
-            .box-content strong {
-              color: #0f172a;
-            }
-            .policy-box {
-              background: #f0fdf4;
-              border: 1px solid #bbf7d0;
-              border-radius: 10px;
-              padding: 1rem;
-              margin-bottom: 1.5rem;
-              font-size: 11px;
-              color: #166534;
-              line-height: 1.6;
-            }
-            .footer-sign {
-              display: flex;
-              justify-content: space-between;
-              align-items: flex-end;
-              border-top: 1px solid #e2e8f0;
-              padding-top: 1.25rem;
-              margin-top: 1rem;
-              font-size: 11px;
-              color: #64748b;
+            @media print {
+              body {
+                background: ${bodyBg} !important;
+                color: ${bodyColor} !important;
+                padding: 0;
+              }
+              .slip-card-wrapper {
+                border: ${cardBorder} !important;
+                background: ${cardBg} !important;
+              }
             }
           </style>
         </head>
         <body>
-          ${printContent.innerHTML}
+          <div class="slip-card-wrapper">
+            ${printContent.innerHTML}
+          </div>
           <script>
             window.onload = function() {
-              window.print();
+              setTimeout(function() {
+                window.print();
+              }, 250);
             };
           </script>
         </body>
@@ -604,12 +586,8 @@ export function ApplicationSlipModal({ isOpen, onClose, data }: ApplicationSlipM
 
         {/* Modal Bottom Actions */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.25rem' }}>
-          <button onClick={onClose} className="btn btn-secondary" style={{ padding: '0.5rem 1.25rem' }}>
+          <button onClick={onClose} className="btn btn-secondary" style={{ padding: '0.5rem 1.5rem' }}>
             Close
-          </button>
-          <button onClick={handlePrint} className="btn btn-primary" style={{ padding: '0.5rem 1.5rem', gap: '0.4rem' }}>
-            <Printer size={15} />
-            <span>Print / Save PDF</span>
           </button>
         </div>
       </div>

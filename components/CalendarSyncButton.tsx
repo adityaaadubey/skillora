@@ -48,41 +48,44 @@ export function CalendarSyncButton({ event, compact = false }: CalendarSyncButto
           e.stopPropagation()
           setOpen(!open)
         }}
-        className={compact ? 'btn btn-secondary' : 'btn btn-secondary'}
+        className="btn btn-secondary"
         style={{
           display: 'inline-flex',
           alignItems: 'center',
-          gap: '0.375rem',
-          padding: compact ? '0.35rem 0.6rem' : '0.625rem 0.875rem',
-          fontSize: compact ? '0.75rem' : '0.875rem',
+          gap: '0.35rem',
+          padding: compact ? '0.35rem 0.65rem' : '0.625rem 0.875rem',
+          fontSize: compact ? '0.76rem' : '0.875rem',
+          fontWeight: 600,
           borderRadius: 'var(--radius-md)',
           background: 'var(--bg-surface)',
           border: '1px solid var(--border-subtle)',
           color: 'var(--text-secondary)',
           cursor: 'pointer',
+          whiteSpace: 'nowrap',
+          lineHeight: 1,
         }}
         aria-label="Add deadline to calendar"
         title="Sync deadline with your calendar"
       >
-        <Calendar size={compact ? 13 : 15} color="var(--accent-indigo)" />
-        <span>{compact ? 'Sync' : 'Add to Calendar'}</span>
-        <ChevronDown size={13} style={{ opacity: 0.7, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+        <Calendar size={compact ? 13 : 15} color="var(--accent-indigo)" style={{ flexShrink: 0 }} />
+        <span style={{ whiteSpace: 'nowrap' }}>{compact ? 'Sync' : 'Add to Calendar'}</span>
+        <ChevronDown size={12} style={{ flexShrink: 0, opacity: 0.8, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
       </button>
 
       {open && (
         <div
           style={{
             position: 'absolute',
-            top: 'calc(100% + 6px)',
+            ...(compact ? { bottom: 'calc(100% + 6px)' } : { top: 'calc(100% + 6px)' }),
             right: 0,
-            zIndex: 70,
-            minWidth: '210px',
-            background: 'var(--bg-glass)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid var(--border-subtle)',
+            zIndex: 100,
+            minWidth: '220px',
+            background: 'var(--bg-surface)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid var(--border-medium)',
             borderRadius: 'var(--radius-md)',
-            boxShadow: '0 12px 30px rgba(0, 0, 0, 0.5)',
+            boxShadow: '0 16px 36px rgba(0, 0, 0, 0.55), 0 0 20px rgba(99, 102, 241, 0.15)',
             padding: '0.375rem',
             animation: 'fadeIn 0.15s ease-out',
           }}

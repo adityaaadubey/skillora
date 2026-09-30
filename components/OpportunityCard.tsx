@@ -64,7 +64,7 @@ export function OpportunityCard({
           flexDirection: 'column',
           padding: '1.35rem',
           position: 'relative',
-          overflow: 'hidden',
+          overflow: 'visible',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--border-subtle)',
           transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',

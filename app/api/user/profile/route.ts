@@ -4,14 +4,16 @@ import { updateProfileSchema } from '../../../../lib/validations'
 
 function calculateCompletion(data: any): number {
   let score = 0
-  if (data.full_name?.trim()) score += 15
-  if (data.college?.trim()) score += 15
-  if (data.degree?.trim() && data.branch?.trim()) score += 15
+  if (data.full_name?.trim()) score += 10
+  if (data.college?.trim()) score += 10
+  if (data.degree?.trim() || data.branch?.trim()) score += 10
   if (data.graduation_year) score += 10
   if (data.bio?.trim()) score += 10
   if (data.location?.trim()) score += 10
-  if (data.preferred_categories?.length > 0) score += 15
-  if (data.career_interests?.length > 0) score += 10
+  if (data.linkedin_url?.trim()) score += 10
+  if (data.github_url?.trim()) score += 10
+  if (data.resume_reference?.trim() || data.portfolio_url?.trim()) score += 10
+  if (data.avatar_url?.trim()) score += 10
   return Math.min(100, score)
 }
 
