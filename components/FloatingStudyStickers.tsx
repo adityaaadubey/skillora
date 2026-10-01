@@ -69,14 +69,17 @@ export function FloatingStudyStickers() {
           align-items: center;
           gap: 0.75rem;
           padding: 0.65rem 0.95rem;
-          background: rgba(15, 23, 42, 0.75);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
+          background: rgba(15, 23, 42, 0.85);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
           border: 1px solid rgba(255, 255, 255, 0.12);
           border-radius: 16px;
           box-shadow: 0 16px 35px -8px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.18);
           transition: transform 0.3s ease;
           user-select: none;
+          will-change: transform;
+          transform: translateZ(0);
+          contain: layout paint;
         }
 
         /* Light theme adaptivity */

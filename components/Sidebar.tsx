@@ -74,7 +74,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
       window.removeEventListener('auth-change', handleAuth)
       window.removeEventListener('storage', handleAuth)
     }
-  }, [pathname])
+  }, [])
 
   const copyFounderContact = () => {
     navigator.clipboard.writeText('skillora.aditya@gmail.com')

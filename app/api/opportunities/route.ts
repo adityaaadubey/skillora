@@ -104,15 +104,22 @@ export async function GET(request: NextRequest) {
       enriched.sort((a, b) => b.relevanceScore - a.relevanceScore)
     }
 
-    return NextResponse.json({
-      data: enriched,
-      pagination: {
-        total: count || 0,
-        page,
-        limit,
-        totalPages: Math.ceil((count || 0) / limit),
+    return NextResponse.json(
+      {
+        data: enriched,
+        pagination: {
+          total: count || 0,
+          page,
+          limit,
+          totalPages: Math.ceil((count || 0) / limit),
+        },
       },
-    })
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=120',
+        },
+      }
+    )
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Failed to list opportunities' }, { status: 500 })
   }

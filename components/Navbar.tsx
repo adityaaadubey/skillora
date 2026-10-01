@@ -114,7 +114,7 @@ export function Navbar() {
       window.removeEventListener('auth-change', handleAuthEvent)
       window.removeEventListener('storage', handleAuthEvent)
     }
-  }, [pathname])
+  }, [])
 
   const toggleTheme = () => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark'
@@ -442,7 +442,7 @@ export function MobileNav() {
       window.removeEventListener('auth-change', handleAuth)
       window.removeEventListener('storage', handleAuth)
     }
-  }, [pathname])
+  }, [])
 
   const links = [
     { href: '/', label: 'Home', icon: Home },

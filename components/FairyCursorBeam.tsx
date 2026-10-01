@@ -48,6 +48,7 @@ export function FairyCursorBeam() {
     let mouse = { x: -500, y: -500, isMoving: false }
     let smoothMouse = { x: -500, y: -500 }
     let lastMoveTime = 0
+    let isRunning = false
 
     const handleResize = () => {
       if (!canvas) return
@@ -63,32 +64,38 @@ export function FairyCursorBeam() {
       lastMoveTime = performance.now()
 
       // Spawn 2-3 fairy dust sparkles on movement for a rich magical trail
-      const count = Math.random() > 0.3 ? 3 : 2
+      const count = Math.random() > 0.4 ? 2 : 1
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2
-        const speed = Math.random() * 0.9 + 0.2
+        const speed = Math.random() * 0.8 + 0.2
         const colorRand = Math.random()
         const colorType = colorRand > 0.75 ? 1 : colorRand > 0.45 ? 2 : 0
 
         particles.push({
-          x: mouse.x + (Math.random() - 0.5) * 10,
-          y: mouse.y + (Math.random() - 0.5) * 10,
+          x: mouse.x + (Math.random() - 0.5) * 8,
+          y: mouse.y + (Math.random() - 0.5) * 8,
           vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 0.35, // slight upward fairy float
-          size: Math.random() * 2.2 + 1.2,
+          vy: Math.sin(angle) * speed - 0.3, // slight upward fairy float
+          size: Math.random() * 2.0 + 1.0,
           alpha: Math.random() * 0.35 + 0.65,
           life: 0,
-          maxLife: Math.floor(Math.random() * 28 + 26),
-          isStar: Math.random() > 0.45, // 55% 4-pointed fairy tale stars
+          maxLife: Math.floor(Math.random() * 24 + 22),
+          isStar: Math.random() > 0.5,
           rotation: Math.random() * Math.PI * 2,
-          rotSpeed: (Math.random() - 0.5) * 0.12,
+          rotSpeed: (Math.random() - 0.5) * 0.1,
           colorType,
         })
       }
 
-      // Limit particle pool to 75 for performance
-      if (particles.length > 75) {
-        particles.splice(0, particles.length - 75)
+      // Limit particle pool to 50 for maximum performance
+      if (particles.length > 50) {
+        particles.splice(0, particles.length - 50)
+      }
+
+      // Wake up render loop if sleeping
+      if (!isRunning) {
+        isRunning = true
+        animationFrameId = requestAnimationFrame(render)
       }
     }
     window.addEventListener('mousemove', handleMouseMove, { passive: true })
@@ -300,6 +307,14 @@ export function FairyCursorBeam() {
           ctx.fill()
           ctx.restore()
         }
+      }
+
+      // If mouse is idle and all sparkles have dissolved, sleep to save 100% CPU/GPU
+      const isIdle = performance.now() - lastMoveTime > 1000
+      if (particles.length === 0 && isIdle) {
+        ctx.clearRect(0, 0, width, height)
+        isRunning = false
+        return
       }
 
       animationFrameId = requestAnimationFrame(render)
